@@ -5,6 +5,12 @@ import socket
 from urllib.error import URLError, HTTPError
 from collections import deque
 
+"""
+TODO:
+1. remove 'queue'
+2. restructure codes
+"""
+
 timeout = 5
 socket.setdefaulttimeout(timeout)
 queue = deque()  # the search queue
@@ -12,18 +18,20 @@ xmlqueue = deque() # target xml
 xmlsourcequeue=deque() # the link point to target xml
 visited = set()
 pagenum = 100
-url = 'http://dblp.uni-trier.de/pers?pos=301'  # A开头的作者pages
+url = 'http://dblp.uni-trier.de/pers?pos=601'  # A开头的作者pages
 queue.append(url)
 url_count = 0
 author_count = 0
 linkre = re.compile('href=\"(.+?)\"')
 
+
 def duplicate(q, s): # 不能重复遍历
-   a=q.count(s)
-   if a>=1:
-    return 0
-   else:
+    if q.count(s) > 0:
+        return 0
     return 1
+
+
+
 xmlfile = open("dblpxml1000.txt", 'wb+')  # 存储xml path txt文件
 xmlsourcefile = open("dblpxmlsource1000.txt", 'wb+')  # 存储link point to xml path txt文件
 
@@ -32,6 +40,7 @@ while queue:
     if author_count >= pagenum:
         print("xmlqueue is full of " + str(pagenum))
         break
+
     url0 = queue[url_count]  # 队首元素出队
     if old_ulr[0] != url0:
          old_ulr[0] = url0

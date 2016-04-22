@@ -3,14 +3,27 @@ import urllib.request
 import re
 import math
 from urllib.error import URLError, HTTPError
+
+
+"""
+TODO:
+1. add tokenization part
+2. restructure codes
+3. I don't know what else > <
+"""
+
+
 timeout = 30
+
 socket.setdefaulttimeout(timeout)
+
 
 class DocData:
     def __init__(self, docID, tcount,urlpath):
         self.doc_ID = docID
         self.term_count = tcount
         self.url = urlpath
+
 
 class DocDetail:
     def __init__(self, docID, tfvalue):
@@ -22,6 +35,7 @@ class TermList:
         self.term = termName
         self.idf_value = 1
         self.postinglist = []
+
 
 def contentmodify(content, d_data, value):
     d_str= [""]
@@ -66,7 +80,7 @@ def CalculateDFvalue(list,doc_count):
     for i in range(len(list)):
         a = list[i].idf_value
         if a>=1:
-           list[i].idf_value= math.log(doc_count/a)
+           list[i].idf_value = math.log(doc_count/a)
     return
 
 def PrintTermTable(list):
@@ -121,7 +135,7 @@ for line in linklines:
     Linkurlset.append(line)
 
 # ------------------------read the xml file----------------------------
-inputfile = open('test.txt', 'r')
+inputfile = open('dblpxml1000.txt', 'r')
 lines = inputfile.readlines()
 # --------------------------ISO-8859-1 code change--------------------------- Latin chacracter is hard to change to unicode?
 latin=('À', 'Á', 'Â', 'Ã', 'Ä', 'Å', 'Æ', 'Ç', 'È', 'É', 'Ê', 'Ë', 'Ì', 'Í', 'Î', 'Ï', 'Ð', 'Ñ', 'Ò', 'Ó', 'Ô', 'Õ', 'Ö'
@@ -210,6 +224,4 @@ SaveDocTale(DocContent)
 CalculateDFvalue(TermTable, Doccount)
 TermTable.sort(key=lambda TermList:TermList.term)
 SaveTable(TermTable)
-
-
 
