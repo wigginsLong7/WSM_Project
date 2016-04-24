@@ -5,14 +5,14 @@ import socket
 from urllib.error import URLError, HTTPError
 from collections import deque
 
-timeout = 5
+timeout = 30
 socket.setdefaulttimeout(timeout)
 queue = deque()  # the search queue
 xmlqueue = deque() # target xml
 xmlsourcequeue=deque() # the link point to target xml
 visited = set()
-pagenum = 100
-url = 'http://dblp.uni-trier.de/pers?pos=301'  # A开头的作者pages
+pagenum = 1000
+url = 'http://dblp.uni-trier.de/pers?pos=1'  # A开头的作者pages
 queue.append(url)
 url_count = 0
 author_count = 0
@@ -67,7 +67,7 @@ while queue:
             if match:  # 访问队列
                 if duplicate(xmlsourcequeue, x) == 1:
                     xmlsourcequeue.append(x)
-                    #print('加入队列 --->  ' + x)
+                    print('加入队列 --->  ' + x)
                     author_count += 1
 
 xml_count = 0
