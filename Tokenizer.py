@@ -94,6 +94,10 @@ class Tokenizer:
     def tokenize(self, token):
         if self.is_entity_del:
             token = self.__del_entity__(token)
+<<<<<<< HEAD
+=======
+
+>>>>>>> origin/master
         token = self.__apply_lower_case__(token)
         token = self.__del_non_alphanumeric__(token)
 
