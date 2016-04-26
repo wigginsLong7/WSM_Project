@@ -92,11 +92,11 @@ class Tokenizer:
         return token.lower()
 
     def tokenize(self, token):
+        if self.is_entity_del:
+            token = self.__del_entity__(token)
         token = self.__apply_lower_case__(token)
         token = self.__del_non_alphanumeric__(token)
 
-        if self.is_entity_del:
-            token = self.__del_entity__(token)
         if self.is_num_del and token:
             token = self.__del_num__(token)
         if self.is_stopping and token:
