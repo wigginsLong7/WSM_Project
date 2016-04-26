@@ -1,9 +1,6 @@
 from Tokenizer import Tokenizer
 
-sentences = ["The odd even invariant for graphs.",
-             "What's your name?",
-             "I AM A STUDENT. NICE TO MEET YOU!"
-             ]
+sentences = ["&#1054;&#1068;"]
 
 tokenizer = Tokenizer()
 tokenizer.set_stemming(True)
@@ -13,5 +10,3 @@ for sentence in sentences:
     tokens = sentence.split(" ")
     for token in tokens:
         print(tokenizer.tokenize(token))
-
-    print("\n")
