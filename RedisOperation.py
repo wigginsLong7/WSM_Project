@@ -3,7 +3,7 @@ from Term import *
 
 class RedisHandler:
 
-   def __init__(self,h='localhost', p=6379, d=0):
+   def __init__(self, h='localhost', p=6379, d=0):
         try:
             self.pool= redis.ConnectionPool(host=h, port=p, db=d)
             self.r = redis.Redis(connection_pool=self.pool)

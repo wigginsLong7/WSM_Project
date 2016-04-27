@@ -1,6 +1,6 @@
 from Tokenizer import Tokenizer
 
-sentences = ["&#1054; &#1068;"]
+sentences = ["&#1054;A B C"]
 
 
 tokenizer = Tokenizer()

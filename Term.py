@@ -36,16 +36,21 @@ class TermList:
         value[0] += "}"
         return value[0]
 
-    def GetPositonInDoc(self,docID):
+
+    # TODO:
+    # please return a list of int
+    # to increase searching speed, I think you may implement
+    # a binary search in the future
+    def GetPositionInDoc(self,docID):
         for i in self.postinglist:
             if docID == i.doc_ID:
-                return i.GetPositionList()  # return the postion of a term in specific document
+                return i.GetPositionList()  # return the position of a term in specific document
         return ""
 
     def GetTFValueInDoc(self, docID):
         for i in self.postinglist:
             if docID == i.doc_ID:
-                return i.GetTFValue()      #return the raw tfvalue of a term in sepcific document
+                return i.GetTFValue()      #return the raw tfvalue of a term in specific document
         print("document "+str(docID)+" doesn't exist")
         return 0
 
