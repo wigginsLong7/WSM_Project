@@ -36,12 +36,6 @@ class TermList:
         value[0] += "}"
         return value[0]
 
-    def GetDocIDList(self):
-        docID = []
-        for i in self.postinglist:
-            docID.append(i.doc_ID)
-        return docID   # return all the doc_ID under the term
-
     def GetPositonInDoc(self,docID):
         for i in self.postinglist:
             if docID == i.doc_ID:
@@ -51,16 +45,37 @@ class TermList:
     def GetTFValueInDoc(self, docID):
         for i in self.postinglist:
             if docID == i.doc_ID:
-                return i.GetTFValue()  #return the raw tfvalue of a term in sepcific document
+                return i.GetTFValue()      #return the raw tfvalue of a term in sepcific document
         print("document "+str(docID)+" doesn't exist")
         return 0
 
-    def GetTFValueList(self):
-        TFlist = []
+
+    def GetDocAndTFValueList(self, value=0, sort=True, order=True):   # default in reverse order sorted
+        docdict={}
         for i in self.postinglist:
-            a = self.GetTFValueInDoc(i.doc_ID)
-            if a != 0:
-                TFlist.append(a)
+            docdict[i.doc_ID] = i.GetTFValue()
+        if sort:
+            if value == 0:
+                a = sorted(docdict.items(), key = lambda d: d[1], reverse=order)  # return sorted nest list
+                return a
+            elif value == 1:
+                b = list(docdict.keys())
+                b.sort(reverse=order)
+                return b                       # return sorted doclist
+            elif value == 2:
+                c = list(docdict.values())
+                c.sort(reverse=order)
+                return c                       # return sorted tfvaluelist
             else:
-                return 0
-        return TFlist  # all the doc_ID under term
+                print("Error, the number of value must be 0,1,2")
+                return ""
+        else:
+            if value == 0:
+                return list(docdict)           # return dictionary of pairs(doc_ID,tfvalue) in arbitrary order
+            elif value == 1:
+                return list(docdict.keys())    # return document list in arbitrary order
+            elif value == 2:
+                return list(docdict.values())  # return tfvalue list in arbitrary order
+            else:
+                print("Error, the number of value must be 0,1,2")
+                return ""

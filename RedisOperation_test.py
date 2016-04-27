@@ -1,8 +1,7 @@
 from RedisOperation import *
 
 """ initialize """
-redispool = redis.ConnectionPool(host='localhost', port=6379, db=0)
-handle =RedisHandler(redispool)
+handle =RedisHandler()
 
 """ get dfvalue of a term, if not exists return 0 """
 print(handle.GetDFValue('based'))
@@ -20,19 +19,15 @@ print(handle.GetDocFullContent('myDocID_5'))
 print(handle.GetDBHeaderData())
 
 """  get the TermList """
-term = handle.GetTermPostingList('in')
+term = handle.GetTermPostingList('for')
 
 if isinstance(term, TermList):
 
-    """  get the Doclist of term in all document,if not exist return null string"""
-    print(term.GetDocIDList())
-
     """  get the Positonlist of term in specific document,if not exist return null string """
-    print(term.GetPositonInDoc('myDocID_4'))
+    print(term.GetPositonInDoc('myDocID_7'))
 
     """  get the TFvalue of term in specific document,if not exist return 0 """
-    print(term.GetTFValueInDoc('myDocID_4'))
+    print(term.GetTFValueInDoc('myDocID_7'))
 
-    """  get the TFvaluelist of term in all document,if not exist return null string"""
-    print(term.GetTFValueList())
-
+    """  get the TFvaluelist and doclist of term in all document,if not exist return null string"""
+    print(term.GetDocAndTFValueList(0))

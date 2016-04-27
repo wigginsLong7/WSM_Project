@@ -1,6 +1,7 @@
 from Term import *
 import re
 import socket
+import gc
 
 timeout = 30
 socket.setdefaulttimeout(timeout)
@@ -108,6 +109,7 @@ def GetDocumentString(insertstring, data):
 
     insertstring = insertstring.replace('\\', ' ').replace('-', ' ').replace('<i>', '').replace('</i>', '').replace('<sup>', '').replace('</sup>', '')
     insertstring = insertstring.replace(',', '').replace('(', '').replace(')', '').replace('$', '').replace('.', '').replace('\'', '').replace(';', '; ').replace('/', ' ')
+    insertstring = ContentStringModify(insertstring)
     return insertstring
 
 def RedisInsert(key, value):
@@ -130,6 +132,8 @@ def InsertDataToRedis(Tlist):
         value = i.ValueString()
         if not RedisInsert(i.term, value):
             return False
+    del Tlist
+    gc.collect()
     return True
 
 def InsertDocDetailToRedis(doclist):
@@ -137,6 +141,8 @@ def InsertDocDetailToRedis(doclist):
         value = i.GetString()
         if not RedisInsert(i.doc_ID, value):
             return False
+    del doclist
+    gc.collect()
     return True
 
 def InsertDBdata(total_word,doc_count,ava_doclength):
@@ -145,3 +151,24 @@ def InsertDBdata(total_word,doc_count,ava_doclength):
     if not RedisInsert(name, value):
         return False
     return True
+
+def CheckKeyExist(key):
+    try:
+        pool = redis.ConnectionPool(host='localhost', port=6379, db=0)
+        r = redis.StrictRedis(connection_pool=pool)
+    except redis.ConnectionError:
+        print("Error: Failed to connect server")
+        return 0
+    if r.exists(key):
+        return 1
+    else:
+        return 2
+
+def ContentStringModify(substring):
+    content = [""]
+    a = substring.split(" ")
+    for i in a:
+        if i != ' ' and i != "":
+            content[0] += (i+" ")
+    end = len(content[0])
+    return content[0][:end-1]
