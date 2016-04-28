@@ -67,7 +67,7 @@ class RedisHandler:
         return c    # return the actual string of document content
 
    def GetDBHeaderData(self):
-        key = 'myDocID_0'
+        key = '0'
         if not self.ExistKey(key):
             return ""
         a = self.FetchData(key)
@@ -84,18 +84,23 @@ class RedisHandler:
 
 
    def GetTermPostingList(self, term):
-        if not self.ExistKey(term):
+        cterm = ""
+        if term.isdigit():
+            cterm = "D_"+str(term)
+        else:
+            cterm = term
+        if not self.ExistKey(cterm):
             return ""
-        a = self.FetchData(term)
+        a = self.FetchData(cterm)
         if a == "":
             return ""
-        new_term = TermList(term)
+        new_term = TermList(cterm)
         t = a.split(':')
         df = a.split('[')                    #{xx[
         df_v = int(df[0][1:])
         new_term.SetDFValue(df_v)
         pos = t[0].find('[')                #{xx[doc_ID,tf_value;(x,x,x,)]
-        new_term = self.AddDocToTermList(new_term,t[0][pos:])
+        new_term = self.AddDocToTermList(new_term, t[0][pos:])
         end = len(t)
         if end > 2:
             for i in range(1, end-1):
@@ -115,7 +120,49 @@ class RedisHandler:
 
    def ExistKey(self, key):
         if not self.r.exists(key):
-            print("Error,"+ key + " doesn't exist")
-            return False
+             print("Error," + key + " doesn't exist")
+             return False
         else:
-            return True
+             return True
+
+
+'''
+   def KeyModify(self, key, value):
+        ma = [""]
+        if value == WSMEnum.AUTHOR:
+            ma[0] = 'A_' + str(key)
+        elif value == WSMEnum.TITLE:
+            ma[0] = 'T_' + str(key)
+        elif value == WSMEnum.BOOKTITLE:
+            ma[0] = 'BT_' + str(key)
+        elif value == WSMEnum.YEAR:
+            ma[0] = 'Y_' + str(key)
+        elif value == WSMEnum.PAGE:
+            ma[0] = 'P_' + str(key)
+        elif value == WSMEnum.VOLUMN:
+            ma[0] = 'V_' + str(key)
+        elif value == WSMEnum.JOURNAL:
+            ma[0] = 'J_' + str(key)
+        else:
+            print("Error,wrong type")
+            return ""
+        return ma[0]
+
+   def GetTermPostingList2(self, term, value=WSMEnum.ALLTYPES):
+        tlist = []
+        if value in range(10, 17):
+            return self.GetTermPostingList(self.KeyModify(term, value))
+        elif value == WSMEnum.ALLTYPES:
+            for i in range(10, 17):
+                newtermlist = self.GetTermPostingList(self.KeyModify(term, i))
+                if newtermlist != "":
+                    tlist.append(newtermlist)
+            if len(tlist) <= 1:
+                return tlist
+            else:
+                return self.UnityTerm(tlist, term)
+        else:
+            return ""
+   def UnityTerm(self, Tlist, termname):
+       return
+'''

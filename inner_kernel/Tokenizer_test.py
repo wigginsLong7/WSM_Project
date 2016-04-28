@@ -1,6 +1,8 @@
 from inner_kernel.Tokenizer import Tokenizer
 
-sentences = ["&#1054;A B C"]
+sentences = ["&#1054; &#1068; A ABC"]
+
+
 tokenizer = Tokenizer()
 tokenizer.set_stemming(True)
 tokenizer.set_stopping(True)

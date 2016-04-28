@@ -1,6 +1,5 @@
 from inner_kernel.Document import *
 
-
 class TermList:
     def __init__(self, termName):
         self.term = termName
@@ -48,21 +47,16 @@ class TermList:
         value[0] += "}"
         return value[0]
 
-
-    # TODO:
-    # please return a list of int
-    # to increase searching speed, I think you may implement
-    # a binary search in the future
-    def GetPositionInDoc(self,docID):
+    def GetPositonInDoc(self,docID):
         for i in self.postinglist:
             if docID == i.doc_ID:
-                return i.GetPositionList()  # return the position of a term in specific document
+                return i.GetIntPositionList()  # return the postion of a term in specific document
         return ""
 
     def GetTFValueInDoc(self, docID):
         for i in self.postinglist:
             if docID == i.doc_ID:
-                return i.GetTFValue()      #return the raw tfvalue of a term in specific document
+                return i.GetTFValue()      #return the raw tfvalue of a term in sepcific document
         print("document "+str(docID)+" doesn't exist")
         return 0
 
