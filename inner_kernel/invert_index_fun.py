@@ -1,7 +1,8 @@
-from Term import *
+from inner_kernel.Term import *
 import re
 import socket
 import gc
+
 
 timeout = 30
 socket.setdefaulttimeout(timeout)
@@ -18,7 +19,7 @@ list = ('&#192;', '&#193;', '&#194;', '&#195;', '&#196;', '&#197;', '&#198;', '&
         '&#240;', '&#241;', '&#242;', '&#243;', '&#244;', '&#245;', '&#246;', '&#248;', '&#249;', '&#250;', '&#251;',
         '&#252;', '&#253;', '&#254;', '&#255;')
 
-proc = re.compile('<r>(.+)<\r>', re.M)
+proc = re.compile('<r>(\n|(.+\n))((.+)\n)+</r>', re.M)
 authorc = re.compile('<author>(.+)</author>')
 titlec = re.compile('<title>(.+)</title>')
 yearc = re.compile('<year>(.+)</year>')
@@ -43,25 +44,13 @@ def ContentModify(content, d_data, value):
     return content
 
 def AddTerm(list, addterm, docID, term_position):
-    a = 0
-    for i in range(len(list)):
-        if list[i].term == addterm:  # an old term
-            a = 1
-            samedoc = 0
-            for x in list[i].postinglist:
-                if x.doc_ID == docID:  # in the same doc
-                    x.AddTermPosition(term_position)
-                    samedoc = 1
-                    break
-            if samedoc == 0:  # new doc
-                list[i].AddElementToPostingList(docID, term_position)
-                list[i].DFValueIncreaseOne()
-            break
-    if a == 0:   #new term
-        newdoc = TermList(addterm)
-        newdoc.AddElementToPostingList(docID, term_position)
-        list.append(newdoc)
-    return list
+    for i in list:
+        if i.SearchTerm(addterm, docID, term_position) == 1:
+            return list
+    newdoc = TermList(addterm)
+    newdoc.AddElementToPostingList(docID, term_position)
+    list.append(newdoc)
+    return True
 
 def SaveDocTale(doclist):
     DocumentList = open("DocData.txt", 'w')  # 存储 postinglist Doc 文件
@@ -89,7 +78,7 @@ def DocIDModify(doc_id):
     prefix = "myDocID_"
     doc_id = prefix + str(doc_id)
     return str(doc_id)
-
+'''
 def GetDocumentString(insertstring, data):
     authordata = authorc.findall(data)
     titledata = titlec.findall(data)
@@ -111,7 +100,7 @@ def GetDocumentString(insertstring, data):
     insertstring = insertstring.replace(',', '').replace('(', '').replace(')', '').replace('$', '').replace('.', '').replace('\'', '').replace(';', '; ').replace('/', ' ')
     insertstring = ContentStringModify(insertstring)
     return insertstring
-
+'''
 def RedisInsert(key, value):
     try:
         pool = redis.ConnectionPool(host='localhost', port=6379, db=0)
@@ -172,3 +161,44 @@ def ContentStringModify(substring):
             content[0] += (i+" ")
     end = len(content[0])
     return content[0][:end-1]
+
+def SingleDocString(substring,data):
+    authordata = authorc.findall(data)
+    titledata = titlec.findall(data)
+    yeardata = yearc.findall(data)
+    volumndata = volumec.findall(data)
+    journaldata = journalc.findall(data)
+    pagedata = pagec.findall(data)
+    booktitledata = booktitlec.findall(data)
+
+    substring = ContentModify(substring, authordata, 1)
+    substring = ContentModify(substring, titledata, 1)
+    substring = ContentModify(substring, booktitledata, 1)
+    substring = ContentModify(substring, pagedata, 0)
+    substring = ContentModify(substring, volumndata, 0)
+    substring = ContentModify(substring, journaldata, 0)
+    substring = ContentModify(substring, yeardata, 0)
+    return substring
+
+def GetDocString(datastr, data):
+    data_sub = data.split('\n')
+    record = False
+    datastring = [""]
+    for i in data_sub:
+        if len(i) >= 3:
+            a = i[0:3]
+            if a == '<r>':
+                record = True
+        if len(i) >= 4:
+            b = i[0:4]
+            if b == '</r>':
+                record = False
+                datastr = SingleDocString(datastr, datastring[0])
+                datastring[0] = ""
+        if record:
+            datastring[0] += (i + '\n')
+    datastr = datastr.replace('\\', ' \\  ').replace('-', ' -  ').replace('<i>', '').replace('</i>', '').replace('<sup>', '').replace('</sup>', '')
+    datastr = datastr.replace(',', ' , ').replace('(', '').replace(')', '').replace('$', ' $ ').replace('.', ' . ').replace('\'', ' \' ').replace(';', '; ').replace('/', ' /  ')
+    datastr = ContentStringModify(datastr)
+    return datastr
+

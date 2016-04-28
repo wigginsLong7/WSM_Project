@@ -1,0 +1,22 @@
+myDocID_1	129	http://dblp.uni-trier.de/pers/hd/a/A:Almaaf_Bader_Ali
+	Alexey Sery Irina Ahmadeeva Yury A Zagorulko &#1040; &#1074; &#1090; &#1086; &#1084; &#1072; &#1090; &#1080; &#1079; &#1072; &#1094; &#1080; &#1103; &#1089; &#1073; &#1086; &#1088; &#1072; &#1080; &#1085; &#1092; &#1086; &#1088; &#1084; &#1072; &#1094; &#1080; &#1080; &#1086; &#1085; &#1072; &#1091; &#1095; &#1085; &#1086; &#1081; &#1076; &#1077; &#1103; &#1090; &#1077; &#1083; &#1100; &#1085; &#1086; &#1089; &#1090; &#1080; &#1076; &#1083; &#1103; &#1090; &#1077; &#1084; &#1072; &#1090; &#1080; &#1095; &#1077; &#1089; &#1082; &#1080; &#1093; &#1080; &#1085; &#1090; &#1077; &#1083; &#1083; &#1077; &#1082; &#1090; &#1091; &#1072; &#1083; &#1100; &#1085; &#1099; &#1093; &#1085; &#1072; &#1091; &#1095; &#1085; &#1099; &#1093; &#1080; &#1085; &#1090; &#1077; &#1088; &#1085; &#1077; &#1090; &#1088; &#1077; &#1089; &#1091; &#1088; &#1089; &#1086; &#1074; An Automatization of Collection of Information about Scientific Activity for Thematic Intelligent Scientific Internet Resources DAMDID RCDL 62 68 2015
+myDocID_2	19	http://dblp.uni-trier.de/pers/hd/a/A:Ambha
+	Ganesh Ramakrishnan Ambha A Ramakrishna Bairi Learning to Generate Diversified Query Interpretations using Biconvex Optimization IJCNLP 733 739 2013
+myDocID_3	32	http://dblp.uni-trier.de/pers/hd/a/A:Arun_Kumar
+	Sidney J Segalowitz James A Desjardins Vincent J Samar Ninan Sajeeth Philip Arun Kumar A A Wavelet Based Algorithm for the Identification of Oscillatory Event Related Potential Components abs 14072227 CoRR 2014
+myDocID_4	23	http://dblp.uni-trier.de/pers/hd/a/A:Christian_G=_Riera
+	Junichi Iijima Dai Senoo Christian G Riera A A Study of the Effect of Knowledge Creating Capabilities on Corporate Performance PACIS 63 2007
+myDocID_5	74	http://dblp.uni-trier.de/pers/hd/a/A:Dang_Quang
+	Tran Dinh Hung Dang Quang A Method of Infinite System of Equations for Problems in Unbounded Domains 584704:1 584704:17 2012 J Applied Mathematics 2012 Nguyen Van Thien Dang Quang A Iterative Method for Solving the Second Boundary Value Problem for Biharmonic Type Equation 891519:1 891519:18 2012 J Applied Mathematics 2012 Vu Vinh Quang Dang Quang A A Domain Decomposition Method for Strongly Mixed Boundary Value Problems for the Poisson Equation HPSC 65 75 2009
+myDocID_6	22	http://dblp.uni-trier.de/pers/hd/a/A:David_Hundely
+	David Hundely A Student research abstract: a privacy preserving profile matching based authentication system for mobile health networks SAC 196 197 2014
+myDocID_7	73	http://dblp.uni-trier.de/pers/hd/a/A:Dhanya_K=
+	Dhanya K A P Vinod Varsha M V Heterogeneous feature space for Android malware detection IC3 383 388 2015 Dhanya K A Nimmy Cleetus Multi objective functions in particle swarm optimization for intrusion detection ICACCI 387 392 2014 P Vinod Dhanya K A Bincy Thomas Exploration of robust features for multiclass emotion classification ICACCI 1704 1709 2014 Dhanya K A Reshma Raveendran Applicability of clustering techniques on masquerade detection ICACCI 2343 2348 2014
+myDocID_8	21	http://dblp.uni-trier.de/pers/hd/a/A:Dwarakanath_T=
+	Gaurav Bhutani Dwarakanath T A Varsha Shirwalkar Wrench perception in intermediary telepresence for remote manipulation 274 282 42 Industrial Robot 2015
+myDocID_9	21	http://dblp.uni-trier.de/pers/hd/a/A:Geetha_Kiran
+	Murali S Geetha Kiran A Automatic hump detection and 3D view generation from a single road image ICACCI 2232 2238 2014
+myDocID_10	20	http://dblp.uni-trier.de/pers/hd/a/A:Ibrahim_M=_W=
+	Walied A Moussa Saunders J R Ibrahim M W A Hydrogel Microvalve Device Modeling and Simulation ICMENS 221 222 2005
+myDocID_11	140	http://dblp.uni-trier.de/pers/hd/a/A:Juan_M=_Moreno
+	Juan M Moreno A Dora M Ballesteros L Speech Scrambling Based on Imitation of a Target Speech Signal with Non confidential Content 3475 3498 33 CSSP 2014 Juan M Moreno A Dora M Ballesteros L Real time speech in speech hiding scheme based on least significant bit substitution and adaptive key 1192 1203 39 Computers &#38; Electrical Engineering 2013 Juan M Moreno A Dora M Ballesteros L Wavelet denoising on hardware devices with Perfect Reconstruction low latency and adaptive thresholding 1300 1311 39 Computers &#38; Electrical Engineering 2013 Juan M Moreno A Dora M Ballesteros L Highly transparent steganography model of speech signals using Efficient Wavelet Masking 9141 9149 39 Expert Syst Appl 2012 Juan M Moreno A Dora M Ballesteros L On the ability of adaptation of speech signals and data hiding 12574 12579 39 Expert Syst Appl 2012

@@ -1,5 +1,5 @@
 import re
-from PorterStemmer import PorterStemmer
+from inner_kernel.PorterStemmer import PorterStemmer
 
 
 class Tokenizer:

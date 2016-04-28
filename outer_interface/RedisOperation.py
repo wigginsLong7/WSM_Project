@@ -1,11 +1,12 @@
 import redis
-from Term import *
+from inner_kernel.Term import *
+from inner_kernel.TypeEnum import WSMEnum
 
 class RedisHandler:
 
-   def __init__(self,h='localhost', p=6379, d=0):
+   def __init__(self, h='localhost', p=6379, d=0):
         try:
-            self.pool= redis.ConnectionPool(host=h, port=p, db=d)
+            self.pool = redis.ConnectionPool(host=h, port=p, db=d)
             self.r = redis.Redis(connection_pool=self.pool)
         except redis.ConnectionError as e:
             print(e)
@@ -66,16 +67,20 @@ class RedisHandler:
         return c    # return the actual string of document content
 
    def GetDBHeaderData(self):
-       key = 'myDocID_0'
-       if not self.ExistKey(key):
+        key = 'myDocID_0'
+        if not self.ExistKey(key):
+            return ""
+        a = self.FetchData(key)
+        if a == "":
            return ""
-       a = self.FetchData(key)
-       if a == "":
-           return ""
-       datalist= []
-       for i in a.split(","):
-           datalist.append(i)
-       return datalist       # first element is total words of DB, second element is number of all doc, third element is avaDoclength
+        datalist= []
+        for i in a.split(","):
+            try:
+                datalist.append(int(i))
+            except TypeError as e:
+                print(e)
+                return ""
+        return datalist       # first element is total words of DB, second element is number of all doc, third element is avaDoclength
 
 
    def GetTermPostingList(self, term):
@@ -88,7 +93,7 @@ class RedisHandler:
         t = a.split(':')
         df = a.split('[')                    #{xx[
         df_v = int(df[0][1:])
-        new_term.SetDFvalue(df_v)
+        new_term.SetDFValue(df_v)
         pos = t[0].find('[')                #{xx[doc_ID,tf_value;(x,x,x,)]
         new_term = self.AddDocToTermList(new_term,t[0][pos:])
         end = len(t)

@@ -1,6 +1,6 @@
-from Tokenizer import Tokenizer
+from inner_kernel.Tokenizer import Tokenizer
 
-sentences = ["&#1054; &#1068;"]
+sentences = ["&#1054; &#1068; A"]
 
 
 tokenizer = Tokenizer()
@@ -11,7 +11,6 @@ tokenizer.set_num_del(False)
 for sentence in sentences:
     tokens = sentence.split(" ")
     for token in tokens:
-
        t = tokenizer.tokenize(token)
        if t != "":
            print(t)

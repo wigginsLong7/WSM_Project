@@ -1,8 +1,12 @@
 import urllib
 import urllib.request
-from invert_index_fun import *
+from inner_kernel.invert_index_fun import *
 from urllib.error import URLError, HTTPError
-from Tokenizer import *
+from inner_kernel import Tokenizer
+from inner_kernel.Tokenizer import *
+import sys
+import psutil
+
 
 Linkurlset = []
 linkfile = open('dblpxmlsource.txt', 'r')
@@ -17,6 +21,7 @@ DocContent = []
 url_count = 0
 true_doc_count = 1
 total_word = 0
+
 for line in lines:
     url_count += 1
     # read xml path
@@ -32,7 +37,8 @@ for line in lines:
     insertstring = ""
     pos = 0
     replace_str = [""]
-    insertstring = GetDocumentString(insertstring, data)
+    #insertstring = GetDocumentString(insertstring, data)
+    insertstring = GetDocString(insertstring, data)
     print("content "+str(true_doc_count)+" is:  "+insertstring)
     a = insertstring.split(' ')
     tokenizer = Tokenizer()
@@ -41,7 +47,7 @@ for line in lines:
         if b != ' ' and b != '\,' and b != "":
             replace_str[0] = tokenizer.tokenize(b)
             if replace_str[0] != "":
-                TermTable = AddTerm(TermTable, replace_str[0], DocIDModify(true_doc_count), pos)
+                AddTerm(TermTable, replace_str[0], DocIDModify(true_doc_count), pos)
             pos += 1
     e = DocData(DocIDModify(true_doc_count))
     e.SetDocCount(pos)
@@ -50,10 +56,15 @@ for line in lines:
     DocContent.append(e)
     true_doc_count += 1
     total_word += pos
+
+
+print(psutil.cpu_percent())
+print(int(psutil.virtual_memory().total / (1027 * 1024)))
+print(psutil.virtual_memory().percent)
 SaveDocTale(DocContent)
 TermTable.sort(key=lambda TermList : TermList.term)
 SaveTable(TermTable)
-
+print(sys.getsizeof(TermTable))
 
 try:
     pool = redis.ConnectionPool(host='localhost', port=6379, db=0)
@@ -65,5 +76,7 @@ except redis.ConnectionError as e:
 InsertDBdata(total_word, true_doc_count-1, int(total_word/(true_doc_count-1)))
 InsertDataToRedis(TermTable)
 InsertDocDetailToRedis(DocContent)
+
+
 
 

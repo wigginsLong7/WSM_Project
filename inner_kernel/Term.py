@@ -1,4 +1,4 @@
-from Document import *
+from inner_kernel.Document import *
 
 
 class TermList:
@@ -19,8 +19,20 @@ class TermList:
     def DFValueIncreaseOne(self):
         self.df_value += 1
 
-    def SetDFvalue(self, df):
+    def SetDFValue(self, df):
         self.df_value = df
+
+    def SearchTerm(self, tname, docID, position):
+        if self.term != tname:
+            return 0
+        else:
+            for x in self.postinglist:
+                if x.doc_ID == docID:
+                    x.AddTermPosition(position)
+                    return 1
+            self.AddElementToPostingList(docID, position)
+            self.DFValueIncreaseOne()
+            return 1
 
     def GetPostString(self, post_str):
         post_str = str(self.df_value) + "\t"
