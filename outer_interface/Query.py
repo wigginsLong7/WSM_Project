@@ -1,5 +1,5 @@
-from RedisOperation import *
-from Tokenizer import Tokenizer
+from outer_interface.RedisOperation import *
+from inner_kernel.Tokenizer import Tokenizer
 from collections import defaultdict
 import operator
 import math
