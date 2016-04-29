@@ -44,8 +44,11 @@ class Query:
         scores = defaultdict(float)
         positions = defaultdict(set)
         col_data = self.db.GetDBHeaderData()
-        N = int(col_data[1] )                        # total number of docs in the collection
-        l_avg = int(col_data[2])                     # avg length of doc
+        if col_data == "":
+            print('WTF!')
+        print(col_data)
+        N = col_data[1]                        # total number of docs in the collection
+        l_avg = col_data[2]                    # avg length of doc
         bm25 = BM25()
 
         for token in self.tokens:
@@ -74,6 +77,8 @@ class Query:
     def retrieve_top_docs(self, K=20):
         docIDs, positions = self.__get_top_docIDs__(K)
         docs = []
+        print(docIDs)
+        print(positions)
 
         for docID in docIDs:
             url = self.db.GetDocUrl(docID)
@@ -84,6 +89,7 @@ class Query:
         return docs
 
 # test
-query = Query('and')
-print(query.retrieve_top_docs())
+if __name__ == 'main':
+    query = Query('James')
+    print(query.retrieve_top_docs())
 
