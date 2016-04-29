@@ -78,7 +78,7 @@ except redis.ConnectionError as e:
     exit(1)
 InsertDBdata(total_word, true_doc_count-1, int(total_word/(true_doc_count-1)))
 InsertDataToRedis(TermTable)
-InsertDocDetailToRedis(DocContent)
+InsertDataToRedis(DocContent)
 
 
 

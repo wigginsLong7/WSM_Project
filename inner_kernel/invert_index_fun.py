@@ -116,24 +116,58 @@ def RedisInsert(key, value):
     print("add success")
     return True
 
+def RedisPiplineInsert(p):
+    try:
+        p.execute()
+    except redis.RedisError as e:
+        print(e)
+        return False
+    print("add success")
+    return True
 def InsertDataToRedis(Tlist):
+    try:
+        pool = redis.ConnectionPool(host='localhost', port=6379, db=0)
+        r = redis.StrictRedis(connection_pool=pool)
+        p = r.pipeline()
+    except redis.ConnectionError:
+        print("Error: Failed to connect server")
+        return False
+    count = [0]
+    value = [""]
     for i in Tlist:
-        value = i.ValueString()
-        if not RedisInsert(i.term, value):
-            return False
+        if isinstance(i, TermList):
+            value[0] = i.ValueString()
+            p.set(i.term, value[0])
+        elif isinstance(i, DocData):
+            value[0] = i.GetString()
+            p.set(i.doc_ID, value[0])
+        if count[0] >= 100:
+            if not RedisPiplineInsert(p):
+                return False
+            count[0] = 0
+        count[0] += 1
+    if not RedisPiplineInsert(p):
+        return False
     del Tlist
     gc.collect()
     return True
-
+'''
 def InsertDocDetailToRedis(doclist):
+    try:
+        pool = redis.ConnectionPool(host='localhost', port=6379, db=0)
+        r = redis.StrictRedis(connection_pool=pool)
+        p = r.pipeline()
+    except redis.ConnectionError:
+        print("Error: Failed to connect server")
+        return False
     for i in doclist:
         value = i.GetString()
-        if not RedisInsert(i.doc_ID, value):
+        if not RedisInsert(p):
             return False
     del doclist
     gc.collect()
     return True
-
+'''
 def InsertDBdata(total_word,doc_count,ava_doclength):
     name = "0"
     value = str(total_word) + "," + str(doc_count) +","+str(ava_doclength)
