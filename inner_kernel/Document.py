@@ -1,5 +1,3 @@
-import redis
-import json
 
 class DocData:
     def __init__(self, docID):

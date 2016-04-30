@@ -1,12 +1,7 @@
-from inner_kernel.Term import *
-import re
-import socket
-import gc
+
 from inner_kernel.TypeEnum import WSMEnum
 from inner_kernel.Tokenizer import *
-
-timeout = 30
-socket.setdefaulttimeout(timeout)
+from inner_kernel.RedisInnerLink import *
 
 latin = (
 'À', 'Á', 'Â', 'Ã', 'Ä', 'Å', 'Æ', 'Ç', 'È', 'É', 'Ê', 'Ë', 'Ì', 'Í', 'Î', 'Ï', 'Ð', 'Ñ', 'Ò', 'Ó', 'Ô', 'Õ', 'Ö'
@@ -30,6 +25,10 @@ pagec = re.compile('<pages>(.+)</pages>')
 booktitlec = re.compile('<booktitle>(.+)</booktitle>')
 
 def TermModify(a, value):
+    '''
+       called by function ContentModify(), if the value is digit ,add the prefix 'D_' to
+       distinct the difference of term and the doc_ID
+    '''
     if a.isdigit():
         return "D_" + str(a)
     else:
@@ -53,6 +52,9 @@ def TermModify(a, value):
     return ma[0]
 '''
 def ContentModify(content, TermTable, doccount, d_data, value, pos):
+    '''
+       call by function SingleDocString(),  seperate the term in the the data segment and add it in the TermTable list
+    '''
     term_name = [""]
     while d_data:
         a = d_data.pop()
@@ -71,6 +73,9 @@ def ContentModify(content, TermTable, doccount, d_data, value, pos):
     return content
 
 def AddTerm(list, addterm, docID, term_position):
+    '''
+       call by function SingleDocString ContentModify(),
+    '''
     for i in list:
         if i.SearchTerm(addterm, docID, term_position) == 1:
             return list
@@ -79,13 +84,17 @@ def AddTerm(list, addterm, docID, term_position):
     list.append(newdoc)
     return True
 
-def SaveDocTale(doclist):
-    DocumentList = open("DocData.txt", 'w')  # 存储 postinglist Doc 文件
+def SaveDocTable(doclist):
+    DocumentList = open("DocData.txt", 'wb')  # 存储 postinglist Doc 文件
     for i in range(len(doclist)):
         try:
-            DocumentList.write(str(doclist[i].doc_ID) + "\t" + str(doclist[i].term_count) + "\t" + doclist[i].url +"\t"+ doclist[i].content+"\n")
-        except :
-            print("wrong")
+            DocumentList.write(
+                str(doclist[i].doc_ID).encode('utf-8') + "\t".encode('utf-8') + str(doclist[i].term_count).encode(
+                    'utf-8') + "\t".encode('utf-8') + doclist[i].url.encode('utf-8') + "\t".encode('utf-8') + doclist[
+                    i].content.encode('utf-8') + "\n".encode('utf-8'))
+        except:
+            print("wrong in save documentdata in txt")
+
     DocumentList.close()
     return
 
@@ -101,100 +110,12 @@ def SaveTable(list):
     termPostList.close()
     return
 
-def RedisInsert(key, value):
-    try:
-        pool = redis.ConnectionPool(host='localhost', port=6379, db=0)
-        r = redis.StrictRedis(connection_pool=pool)
-    except redis.ConnectionError:
-        print("Error: Failed to connect server")
-        return False
-    try:
-        r.set(key, value)
-    except redis.RedisError as e:
-        print(e)
-        return False
-    print("add success")
-    return True
-
-def RedisPiplineInsert(p):
-    try:
-        p.execute()
-    except redis.RedisError as e:
-        print(e)
-        return False
-    print("add success")
-    return True
-def InsertDataToRedis(Tlist):
-    try:
-        pool = redis.ConnectionPool(host='localhost', port=6379, db=0)
-        r = redis.StrictRedis(connection_pool=pool)
-        p = r.pipeline()
-    except redis.ConnectionError:
-        print("Error: Failed to connect server")
-        return False
-    count = [0]
-    value = [""]
-    for i in Tlist:
-        if isinstance(i, TermList):
-            value[0] = i.ValueString()
-            p.set(i.term, value[0])
-        elif isinstance(i, DocData):
-            value[0] = i.GetString()
-            p.set(i.doc_ID, value[0])
-        if count[0] >= 100:
-            if not RedisPiplineInsert(p):
-                return False
-            count[0] = 0
-        count[0] += 1
-    if not RedisPiplineInsert(p):
-        return False
-    del Tlist
-    gc.collect()
-    return True
-'''
-def InsertDocDetailToRedis(doclist):
-    try:
-        pool = redis.ConnectionPool(host='localhost', port=6379, db=0)
-        r = redis.StrictRedis(connection_pool=pool)
-        p = r.pipeline()
-    except redis.ConnectionError:
-        print("Error: Failed to connect server")
-        return False
-    for i in doclist:
-        value = i.GetString()
-        if not RedisInsert(p):
-            return False
-    del doclist
-    gc.collect()
-    return True
-'''
-def InsertDBdata(total_word,doc_count,ava_doclength):
+def InsertDBdata(total_word,doc_count,ava_doclength,l):
     name = "0"
     value = str(total_word) + "," + str(doc_count) +","+str(ava_doclength)
-    if not RedisInsert(name, value):
+    if not l.RedisInsert(name, value):
         return False
     return True
-
-def CheckKeyExist(key):
-    try:
-        pool = redis.ConnectionPool(host='localhost', port=6379, db=0)
-        r = redis.StrictRedis(connection_pool=pool)
-    except redis.ConnectionError:
-        print("Error: Failed to connect server")
-        return 0
-    if r.exists(key):
-        return WSMEnum.KEY_EXIST
-    else:
-        return WSMEnum.KEY_NOT_EXIST
-
-def ContentStringModify(substring):
-    content = [""]
-    a = substring.split(" ")
-    for i in a:
-        if i != ' ' and i != "":
-            content[0] += (i+" ")
-    end = len(content[0])
-    return content[0][:end-1]
 
 def SingleDocString(substring, TermTable, doccount, data, pos):
     authordata = authorc.findall(data)
@@ -231,46 +152,25 @@ def GetDocString(datastr, TermTable, doccount, data, pos):
                 datastring[0] = ""
         if record:
             datastring[0] += (i + '\n')
-
+    '''
+    s = linker.CheckMergeInRedis(TermTable)
+    if s == WSMEnum.TERM_INSERT_SUCCESS:
+        print("len is " + str(len(TermTable)))
+        flag = 1
+    elif s == WSMEnum.TERM_INSERT_FAIL:
+        return ""
+    '''
     length = len(datastr)
-    #datastr = ContentStringModify(datastr)
     return datastr[:length-1]
 
 def StringReplaceModify(datastring):
-    """ Latin 1 character replace and deal with the specific character"""
+    """ replace Latin 1 character  and deal with the specific character"""
     for i in range(0, 62):
         datastring = datastring.replace(list[i], latin[i])
     datastring = datastring.replace('<i>', '').replace('</i>', '').replace('<sup>', '').replace('</sup>', '').replace('(', ' ( ').replace(')', ' ) ')
     datastring = datastring.replace(',', ' , ').replace('$', ' $ ').replace('.', ' . ').replace('\'', ' \' ').replace(';', '; ').replace('\\', ' \\  ').replace('-', ' -  ').replace(':', ' : ')
     return datastring
-'''
-def CheckMergeInRedis(TermTable):
-    if len(TermTable) >= 100:
-        try:
-            pool = redis.ConnectionPool(host='localhost', port=6379, db=0)
-            r = redis.StrictRedis(connection_pool=pool)
-        except redis.ConnectionError:
-            print("Error: Failed to connect server")
-            return False
-        if r.dbsize() == 0:
-            if not InsertDataToRedis(TermTable):
-                return False
-        else:
-            if not MergeInRedis(TermTable):
-                return False
-        return True
-    else:
-        return False
-
-def MergeInRedis(TermTable):
-    for i in  TermTable:
-         if CheckKeyExist(i.term) == WSMEnum.KEY_EXIST:
 
 
-    return
-
-def GetOldTerm():
-    return
-'''
 
 

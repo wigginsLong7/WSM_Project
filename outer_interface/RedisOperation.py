@@ -1,23 +1,12 @@
-import redis
-from inner_kernel.Term import *
-from inner_kernel.TypeEnum import WSMEnum
+from inner_kernel.RedisInnerLink import *
 
-class RedisHandler:
+class RedisHandler(RedisLinker):
 
    def __init__(self, h='localhost', p=6379, d=0):
-        try:
-            self.pool = redis.ConnectionPool(host=h, port=p, db=d)
-            self.r = redis.Redis(connection_pool=self.pool)
-        except redis.ConnectionError as e:
-            print(e)
+       RedisLinker.__init__(self, h, p, d)
 
    def FetchData(self, key):
-        try:
-            value = self.r.get(key).decode('utf-8')
-        except redis.RedisError as e:
-            print(e)
-            return ""
-        return value
+        return RedisLinker.FetchData(self, key)
 
    def GetDFValue(self, term):
         if not self.ExistKey(term):
@@ -84,46 +73,13 @@ class RedisHandler:
 
 
    def GetTermPostingList(self, term):
-        cterm = ""
-        if term.isdigit():
-            cterm = "D_"+str(term)
-        else:
-            cterm = term
-        if not self.ExistKey(cterm):
-            return ""
-        a = self.FetchData(cterm)
-        if a == "":
-            return ""
-        new_term = TermList(cterm)
-        t = a.split(':')
-        df = a.split('[')                    #{xx[
-        df_v = int(df[0][1:])
-        new_term.SetDFValue(df_v)
-        pos = t[0].find('[')                #{xx[doc_ID,tf_value;(x,x,x,)]
-        new_term = self.AddDocToTermList(new_term, t[0][pos:])
-        end = len(t)
-        if end > 2:
-            for i in range(1, end-1):
-                new_term = self.AddDocToTermList(new_term, t[i])
-        return new_term   # return structure TermList
+       return RedisLinker.GetTermPostingList(self, term)
 
    def AddDocToTermList(self, Tlist, data):   # [doc_ID,tf_value;(x,x,x,)]
-        Document = DocDetail()
-        t = data.split(';')
-        docID = t[0].split(',')                    # [doc_ID,tf_value
-        Document.SetDocID(docID[0][1:])
-        end = len(t[1])-3                        # reduce  ,) from (x,x,x,)
-        for i in t[1][1:end].split(','):        # x,x,x -> x x x
-            Document.AddTermPosition(i)
-        Tlist.AddDocument(Document)
-        return Tlist
+        return RedisLinker.AddDocToTermList(self, Tlist, data)
 
    def ExistKey(self, key):
-        if not self.r.exists(key):
-             print("Error," + key + " doesn't exist")
-             return False
-        else:
-             return True
+        return RedisLinker.ExistKey(self, key)
 
 
 '''
