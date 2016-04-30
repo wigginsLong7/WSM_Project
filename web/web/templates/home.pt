@@ -32,6 +32,7 @@
                     <div class="form-group">
                         <input type="text" name="query" class="form-control" placeholder="Type your words"
                         value="${query_terms}">
+                        <!--<input type="hidden" name="page" value="0">-->
                         <button type="submit" class="btn btn-info">Search!</button>
                     </div>
                 </form>
@@ -39,7 +40,7 @@
         </div>
         <div class="container">
             <div class="col-lg-offset-1 col-lg-10 results">
-                <p tal:condition="python:len(docs)==0">Sorry, no results found.</p>
+                <p tal:condition="python:len(docs)==0 and query_terms !=''">Sorry, no results found.</p>
                 <ul tal:condition="python:len(docs)>0">
                     <li tal:repeat="doc docs">
                         <h4><a href="${doc.url}">${doc.url}</a></h4>
@@ -47,6 +48,24 @@
                     </li>
                 </ul>
              </div>
+
+            <div class="col-lg-offset-1 col-lg-10 pagination-wrapper">
+               <ul class="pagination" tal:condition="python:query_terms != ''">
+                <li tal:define="disabled python:cur_page <= 1" tal:attributes="class 'disabled' if disabled else None">
+                  <a href="/?query=${query_terms}&page=${cur_page - 1}" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                  </a>
+                </li>
+                <li tal:repeat="page range(page_counts)">
+                    <a href="/?query=${query_terms}&page=${page+1}" tal:define="active python:(page+1)==cur_page"
+                    tal:attributes="class 'active' if active else None">${page+1}</a></li>
+                <li tal:define="disabled python:cur_page >= page_counts" tal:attributes="class 'disabled' if disabled else None">
+                  <a href="/?query=${query_terms}&page=${cur_page + 1}" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                  </a>
+                </li>
+              </ul>
+            </div>
         </div>
 
           <div class="container copyright" style="text-align:center">

@@ -39,3 +39,13 @@ input.form-control[name="query"] {
 .results ul li {
     margin-bottom: 20px;
 }
+
+.pagination-wrapper {
+    text-align: center
+}
+
+.pagination li a.active {
+    background: blue;
+    color: white;
+    cursor: default;
+}

@@ -22,12 +22,43 @@ class BM25:
 
         return IDF * TF
 
+"""
+class QueryCache:
+
+    def __init__(self):
+        self.docs = []
+        self.positions = defaultdict(list)
+
+    def store(self, docs, positions):
+        self.docs = docs
+        self.positions = positions
+
+    def fetch(self, st, en):
+        if st < 0:
+            st = 0
+        if en > len(self.docs):
+            en = len(self.docs)
+
+        docs_ret = self.docs[st:en]
+        positions_ret = defaultdict(list)
+        for docID in docs_ret:
+            positions_ret[docID] = self.positions[docID]
+
+        return docs_ret, positions_ret
+
+    def reset(self):
+        self.docs = []
+        self.positions = defaultdict(list)
+"""
+
 class Query:
 
     def __init__(self, query):
         self.db = RedisHandler()
         self.tokenizer = Tokenizer()
         self.tokens = self.__filter_query__(query)
+        self.docIDs = []
+        self.positions = defaultdict(list)
 
     def __filter_query__(self, query):
         words = query.split(' ')
@@ -80,20 +111,30 @@ class Query:
         else:
             return docIDs, positions
 
-    def retrieve_top_docs(self, K=20):
-        docIDs, positions = self.__get_top_docIDs__(K)
-        docs = []
+    def retrieve_top_docs(self, st, end):
+        if len(self.docIDs) == 0:
+            self.docIDs, self.positions = self.__get_top_docIDs__(1000)
 
+        if st >= len(self.docIDs):
+            return []
+        if end > len(self.docIDs):
+            end = len(self.docIDs)
+
+        docIDs = self.docIDs[st:end]
+        docs = []
         for docID in docIDs:
             url = self.db.GetDocUrl(docID)
             content = self.db.GetDocFullContent(docID)
-            pos = positions[docID]
+            pos = self.positions[docID]
             docs.append({"url": url, "content": content, "position": pos})
 
         return docs
 
+    def get_rel_doc_counts(self):
+        return len(self.docIDs)
+
 # test
 if __name__ == 'main':
     query = Query('James')
-    print(query.retrieve_top_docs())
+    print(query.retrieve_top_docs(0,20))
 
