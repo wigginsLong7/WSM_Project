@@ -39,7 +39,8 @@
         </div>
         <div class="container">
             <div class="col-lg-offset-1 col-lg-10 results">
-                <ul>
+                <p tal:condition="python:len(docs)==0">Sorry, no results found.</p>
+                <ul tal:condition="python:len(docs)>0">
                     <li tal:repeat="doc docs">
                         <h4><a href="${doc.url}">${doc.url}</a></h4>
                         <p tal:content="structure doc.content"></p>
