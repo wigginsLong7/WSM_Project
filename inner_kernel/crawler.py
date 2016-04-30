@@ -4,22 +4,15 @@ import urllib
 import socket
 from urllib.error import URLError, HTTPError
 from collections import deque
-
-
-"""
-TODO:
-1. remove 'queue'
-2. restructure codes
-"""
-
 timeout = 30
 socket.setdefaulttimeout(timeout)
+
 queue = deque()  # the search queue
 xmlqueue = deque() # target xml
 xmlsourcequeue=deque() # the link point to target xml
 visited = set()
 
-pagenum = 1000
+pagenum = 10
 url = 'http://dblp.uni-trier.de/pers?pos=1'  # A开头的作者pages
 queue.append(url)
 url_count = 0

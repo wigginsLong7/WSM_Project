@@ -116,7 +116,6 @@ http://dblp.uni-trier.de/pers/hd/a/A=:V=_David_S=aacute=nchez
 http://dblp.uni-trier.de/pers/hd/a/A=:V=_V=_N=_S=_N=_Srirangam
 http://dblp.uni-trier.de/pers/hd/a/A=:VeeraMuthu
 http://dblp.uni-trier.de/pers/hd/a/A=:Venkata_Sai_Kiran
-http://dblp.uni-trier.de/pers/hd/a/A==Bounouar:M=
 http://dblp.uni-trier.de/pers/hd/a/A==Rahim:Yousif
 http://dblp.uni-trier.de/pers/hd/a/A==Razzak:Mohammed
 http://dblp.uni-trier.de/pers/hd/a/Aa:Alied_van_der
@@ -293,3 +292,5 @@ http://dblp.uni-trier.de/pers/hd/a/Aaltonen:T=
 http://dblp.uni-trier.de/pers/hd/a/Aaltonen:Timo
 http://dblp.uni-trier.de/pers/hd/a/Aaltonen:V=
 http://dblp.uni-trier.de/pers/hd/a/Aaltonen:Veijo
+http://dblp.uni-trier.de/pers/hd/a/Aaltonen:Viljakaisa
+http://dblp.uni-trier.de/pers/hd/a/Aalykke:S=oslash=ren
