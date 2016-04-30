@@ -47,11 +47,11 @@ class TermList:
         value[0] += "}"
         return value[0]
 
-    def GetPositonInDoc(self,docID):
+    def GetPositionInDoc(self,docID):
         for i in self.postinglist:
             if docID == i.doc_ID:
                 return i.GetIntPositionList()  # return the postion of a term in specific document
-        return ""
+        return []
 
     def GetTFValueInDoc(self, docID):
         for i in self.postinglist:

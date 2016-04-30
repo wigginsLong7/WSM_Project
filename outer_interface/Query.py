@@ -44,9 +44,10 @@ class Query:
         scores = defaultdict(float)
         positions = defaultdict(set)
         col_data = self.db.GetDBHeaderData()
-        if col_data == "":
-            print('WTF!')
-        print(col_data)
+
+        if not col_data:
+            return [], []
+
         N = col_data[1]                        # total number of docs in the collection
         l_avg = col_data[2]                    # avg length of doc
         bm25 = BM25()
@@ -66,19 +67,22 @@ class Query:
 
         sorted_scores = sorted(scores.items(), key = operator.itemgetter(1), reverse=True)
         docIDs = []
+
         for docID, score in sorted_scores:
             docIDs.append(docID)
 
         if K <= len(docIDs):
-            return (docIDs[0:K], positions[docIDs[0:K]])
+            docIDs_K = docIDs[0:K]
+            positions_K = defaultdict(list)
+            for docID in docIDs_K:
+                positions_K[docID] = positions[docID]
+            return docIDs_K, positions_K
         else:
-            return (docIDs, positions)
+            return docIDs, positions
 
     def retrieve_top_docs(self, K=20):
         docIDs, positions = self.__get_top_docIDs__(K)
         docs = []
-        print(docIDs)
-        print(positions)
 
         for docID in docIDs:
             url = self.db.GetDocUrl(docID)

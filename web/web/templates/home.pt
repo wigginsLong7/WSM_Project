@@ -15,7 +15,7 @@
 
     <!-- Custom styles for this scaffold -->
     <!--<link href="${request.static_url('web:static/theme.css')}" rel="stylesheet">-->
-
+    <link href="${request.static_url('web:static/custom.css')}" rel="stylesheet">
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
       <script src="//oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
@@ -25,32 +25,32 @@
 
   <body>
 
-    <div class="starter-template">
-      <div class="container">
+    <div class="container page-wrapper ${page_class}">
         <div class="container">
             <div class="col-lg-offset-2 col-lg-8">
-                <form method="GET" action="/">
+                <form method="GET" action="/" class="query-form">
                     <div class="form-group">
-                        <input type="text" name="query" class="form-control" placeholder="Type your words">
+                        <input type="text" name="query" class="form-control" placeholder="Type your words"
+                        value="${query_terms}">
                         <button type="submit" class="btn btn-info">Search!</button>
                     </div>
                 </form>
              </div>
         </div>
         <div class="container">
-            <ul>
-                <li tal:repeat="doc docs">
-                    <p><a href="${doc.url}">${doc.content}</a></p>
-                    <p>position: ${doc.position}</p>
-                </li>
-            </ul>
+            <div class="col-lg-offset-1 col-lg-10 results">
+                <ul>
+                    <li tal:repeat="doc docs">
+                        <h4><a href="${doc.url}">${doc.url}</a></h4>
+                        <p tal:content="structure doc.content"></p>
+                    </li>
+                </ul>
+             </div>
         </div>
-        <div class="container" style="position:absolute;bottom:0;">
-          <div class="copyright" style="text-align:center">
+
+          <div class="container copyright" style="text-align:center">
             Copyright &copy; Dummies
           </div>
-        </div>
-      </div>
     </div>
 
 
