@@ -70,7 +70,6 @@ class TermList:
         value[0] += "}"
         return value[0]
 
-<<<<<<< HEAD
     def GetPositonInDoc(self,docID):
         '''
             used by query.py, and outer interface with search engine, return the position
@@ -84,13 +83,12 @@ class TermList:
             if docID == i.doc_ID:
                 return i.GetIntPositionList()
         return nulllist
-=======
+
     def GetPositionInDoc(self,docID):
         for i in self.postinglist:
             if docID == i.doc_ID:
                 return i.GetIntPositionList()  # return the postion of a term in specific document
         return []
->>>>>>> f89c8bfec1b1d0b2e9436a30f6a41a1591fba32e
 
     def GetTFValueInDoc(self, docID):
         '''
