@@ -36,13 +36,28 @@ class RedisHandler(RedisLinker):
         return count  # return the number of word of specific document
 
    def GetDocUrl(self, docname):
-       if not self.ExistKey(docname):
-           return ""
-       a = self.FetchData(docname)
-       if a == "":
-           return ""
-       t = a.split(',')
-       return t[1]  # return the actual url link to document
+        if not self.ExistKey(docname):
+            return ""
+        a = self.FetchData(docname)
+        if a == "":
+            return ""
+        t = a.split(',')
+        if len(t) < 3:
+            print("Error,not enough detail in Doc "+str(docname))
+            return ""
+        return t[1]  # return the actual url link to document
+
+   def GetDocTitle(self, docname):
+        if not self.ExistKey(docname):
+            return ""
+        a = self.FetchData(docname)
+        if a == "":
+            return ""
+        t = a.split(',')
+        if len(t) < 3:
+            print("Error,not enough detail in Doc " + str(docname))
+            return ""
+        return t[2]  # return the actual url link to document
 
    def GetDocFullContent(self,docname):
         if not self.ExistKey(docname):
@@ -56,7 +71,7 @@ class RedisHandler(RedisLinker):
         return c    # return the actual string of document content
 
    def GetDBHeaderData(self):
-        key = '0'
+        key ='0'
         if not self.ExistKey(key):
             return ""
         a = self.FetchData(key)

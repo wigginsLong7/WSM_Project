@@ -5,6 +5,7 @@ class DocData:
         self.term_count = 0
         self.url = ""
         self.content = ""
+        self.title = ""
 
     def SetDocCount(self, tcount):
         self.term_count = tcount
@@ -20,8 +21,11 @@ class DocData:
 
     def GetString(self):
         sub = [""]
-        sub[0] = "{" + str(self.term_count)+ ","+self.url +","+"["+self.content+"]}"
+        sub[0] = "{" + str(self.term_count)+ ","+self.url +","+self.title+","+"["+self.content+"]}"
         return sub[0]
+
+    def SetTitle(self,tstring):
+        self.title = tstring
 
 class DocDetail:
     def __init__(self):

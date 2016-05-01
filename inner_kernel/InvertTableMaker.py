@@ -62,17 +62,32 @@ class InvertTableMaker:
         inputfile = open(self.xmlpath, 'r')
         lines = inputfile.readlines()
         for line in lines:
-            self.url_count += 1
-            insertstring = ""
-            pos = [0]
             dh = DocHandler()
-            insertstring = dh.GetDocString(insertstring, self.TermTable, self.true_doc_count, self.GetUrlData(line), pos)
-            if insertstring == "":
-                print("the inserting in "+str(self.true_doc_count)+" is null")
+            self.url_count += 1
+            type = self.CheckLinkType(linklist[self.url_count-1])
+            if type == 3:
                 continue
+            whole_content = [""]
+            a = line.split(',')
+            pos = [0]
+            for suburl in a:
+                if suburl == "" or suburl == '\n':
+                    continue
+                insertstring = ""
+                data = self.GetUrlData(suburl)
+                if type == 0:
+                    insertstring = dh.GetDocString(insertstring, self.TermTable, self.true_doc_count, data, pos)
+                elif type == 1 or type == 2:
+                    insertstring = dh.GetSingleDocString(insertstring, self.TermTable, self.true_doc_count, data, pos)
+                if insertstring == "":
+                    print("the inserting in " + str(self.true_doc_count) + " is null")
+                    continue
+                whole_content[0] += insertstring
+            title = dh.FindDocTitle(self.GetUrlData(linklist[self.url_count-1]))
+            print(title)
             print(pos[0])
-            print("content " + str(self.true_doc_count) + " is:  " + insertstring)
-            self.DocumentDataBuild(linklist, insertstring, pos)
+            print("content " + str(self.true_doc_count) + " is:  " + whole_content[0])
+            self.DocumentDataBuild(linklist,  whole_content[0], title, pos)
         print(self.total_word)
         self.TermTable.sort(key=lambda TermList: TermList.term)
         if self.SaveDataToHardDisk():
@@ -100,13 +115,14 @@ class InvertTableMaker:
             return ""
         return data
 
-    def DocumentDataBuild(self, Linkurlset, insertstring, pos):
+    def DocumentDataBuild(self, linklist, insertstring, t,pos):
         '''
             get the data content in the xml url
           '''
         e = DocData(self.true_doc_count)
+        e.SetTitle(t)
         e.SetDocCount(pos[0])
-        e.SetUrl(Linkurlset[self.url_count - 1])
+        e.SetUrl(linklist[self.url_count-1])
         e.SetDocContent(insertstring)
         self.DocContent.append(e)
         self.true_doc_count += 1
@@ -138,8 +154,8 @@ class InvertTableMaker:
             try:
                 DocumentList.write(
                     str(self.DocContent[i].doc_ID).encode('utf-8') + "\t".encode('utf-8') + str(self.DocContent[i].term_count).encode(
-                        'utf-8') + "\t".encode('utf-8') + self.DocContent[i].url.encode('utf-8') + "\t".encode('utf-8') +
-                    self.DocContent[i].content.encode('utf-8') + "\n".encode('utf-8'))
+                        'utf-8') + "\t".encode('utf-8') + self.DocContent[i].url.encode('utf-8') + "\t".encode('utf-8')+
+                     self.DocContent[i].title.encode('utf-8') + "\t".encode('utf-8') +self.DocContent[i].content.encode('utf-8') + "\n".encode('utf-8'))
             except:
                 print("wrong in save documentdata in txt")
                 return False
@@ -158,17 +174,31 @@ class InvertTableMaker:
             else:
                 return False
         if self.save_data_to_redis:
-            self.RefreshRedisDB()
+            if not linker.RefreshDB():
+                return False
             value = str(self.total_word) + "," + str(self.true_doc_count-1) + "," + str(int(self.total_word/(self.true_doc_count-1)))
-            if not linker.RedisInsert("0", value):
+            if not linker.RedisInsert('0', value):
                 print("Error, insert headerData failed'")
                 return False
-            if linker.RefreshDB():
-                if linker.InsertDataToRedis(self.TermTable) and linker.InsertDataToRedis(self.DocContent):
-                    if linker.SaveData():
-                        return True
+            if linker.InsertDataToRedis(self.TermTable) and linker.InsertDataToRedis(self.DocContent):
+                if linker.SaveData():
+                    return True
             return False
         return True
+
+    def CheckLinkType(self ,url):
+        '''
+           check the type of  url
+        '''
+        if url.find('http://dblp.uni-trier.de/pers/hd/') != -1:
+            return 0
+        elif url.find('http://dblp.uni-trier.de/db/journals/') != -1:
+            return 1
+        elif url.find('http://dblp.uni-trier.de/db/conf/') != -1:
+            return 2
+        else:
+            return 3
+
 
 
 

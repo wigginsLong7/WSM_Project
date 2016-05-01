@@ -18,8 +18,23 @@ class crawler:
         self.linkqueue = deque()
         self.pagenum = pnum
         self.url = starturl
-        self.xmlpath = "dblpxml.txt"
-        self.linkpath = "dblpxmlsource.txt"
+        self.xmlpath = "dblpxmlconf.txt"
+        self.linkpath = "dblpxmlsourceconf.txt"
+
+    def CheckCrawlType(self):
+        if self.url.find('http://dblp.uni-trier.de/pers?') != -1 and self.crawltype != 0:
+            print("Error, start url is the author page type, please check the inpurt crawl type")
+            return False
+        elif self.url.find('http://dblp.uni-trier.de/db/journals/') != -1 and self.crawltype != 1:
+            print("Error, start url is the journal page type,please check the inpurt crawl type")
+            return False
+        elif self.url.find('http://dblp.uni-trier.de/db/conf/') != -1 and self.crawltype != 2:
+            print("Error, start url is the conference page type,please check the inpurt crawl type")
+            return False
+        if self.crawltype < 0 or self.crawltype > 2:
+            return False
+        return True
+
 
     def ResetURL(self, newurl):
         self.url = newurl
@@ -46,31 +61,47 @@ class crawler:
             old_ulr[0] = self.url
         else:
             url_count[0] += 1
-            self.url = "http://dblp.uni-trier.de/pers?pos=" + str(300 * url_count[0] + 1)
+            if self.crawltype == 0:
+                self.url = "http://dblp.uni-trier.de/pers?pos=" + str(300 * url_count[0] + 1)
+            elif self.crawltype == 1:
+                self.url = "http://dblp.uni-trier.de/db/journals/?pos=" + str(100 * url_count[0] + 1)
+            elif self.crawltype == 2:
+                self.url = "http://dblp.uni-trier.de/db/conf/?pos=" + str(100 * url_count[0] + 1)
             print("add another url " + str(author_count[0]))
         return
 
-    def AddElementToQueue(self,data,author_count,pattern,queue,Qtype, xmlfile= "", xmlsourcefile= "",path=""):
+    def AddElementToQueue(self,data,author_count,pattern,queue,Qtype,xmlfile= ""):
+        flag = [0]
         for x in linkre.findall(data):
-            if Qtype and author_count[0] >= self.pagenum:
+            if Qtype == 1 and author_count[0] >= self.pagenum:
                 break
             if 'http' in x and x not in self.Visited:
                 match = re.search(pattern, x)
                 if match:  # 访问队列
+                    dup = False
                     if self.Duplicate(queue, x) == 1:
-                        queue.append(x)
-                        if Qtype:
+                        dup = True
+                    if Qtype == 1 or Qtype == 2:
+                        if dup:
+                            queue.append(x)
                             print('加入队列 --->  ' + x)
-                        else:
-                            xmlfile.write(bytes(x, 'utf-8'))
-                            xmlfile.write(bytes('\r\n', 'utf-8'))
-                            xmlsourcefile.write(bytes(path, 'utf-8'))
-                            xmlsourcefile.write(bytes('\r\n', 'utf-8'))
+                            author_count[0] += 1
+                    elif Qtype == 0:
+                        if (self.crawltype == 0 and dup) or (self.crawltype == 1 or self.crawltype == 2):
+                            queue.append(x)
+                            xmlfile.write(bytes(x+",", 'utf-8'))
+                            flag[0] = 1
                             print("actual xml add " + str(author_count[0]) + "--->" + x)
-                        author_count[0] += 1
-        return
+                            author_count[0] += 1
+                    else:
+                        print("input type Error")
+                        return False
+        if Qtype == 0 and flag[0] == 0:
+            return False
+        else:
+            return True
 
-    def FindLinkSet(self):
+    def FindLinkSet(self,linkpattern):
         author_count = [0]
         old_ulr = [""]
         url_count = [0]
@@ -83,8 +114,7 @@ class crawler:
             data = self.Catchdata(self.url)
             if data == "":
                 continue
-            perslimit = re.compile(r'http://dblp.uni-trier.de/pers/hd/a/')  # link point to xml path
-            self.AddElementToQueue(data, author_count, perslimit, self.linkqueue, True)
+            self.AddElementToQueue(data, author_count, linkpattern, self.linkqueue, 1)
         return
 
     def Catchdata(self,fetchurl):
@@ -108,7 +138,7 @@ class crawler:
             return ""
         return data
 
-    def FindXmlSet(self):
+    def FindXmlSet(self,xmlpattern):
         xml_count = [0]
         xmlfile = open(self.xmlpath, 'wb+')  # 存储xml path txt文件
         xmlsourcefile = open(self.linkpath, 'wb+')  # 存储link point to xml path txt文件
@@ -119,11 +149,50 @@ class crawler:
             data = self.Catchdata(path)
             if data == "":
                 continue
-            xxlimtit = re.compile(r'http://dblp.uni-trier.de/pers/xx')  # xml path
-            self.AddElementToQueue(data, xml_count, xxlimtit, self.linkqueue, False, xmlfile, xmlsourcefile, path)
+            if self.AddElementToQueue(data, xml_count, xmlpattern, self.linkqueue, 0, xmlfile):
+                xmlfile.write(bytes('\r\n', 'utf-8'))
+                xmlsourcefile.write(bytes(path, 'utf-8'))
+                xmlsourcefile.write(bytes('\r\n', 'utf-8'))
         xmlfile.close()
         xmlsourcefile.close()
 
+    def MediumnJumpForLinkQueue(self):
+        count = [len(self.linkqueue)]
+        link_num = [0]
+        while self.linkqueue:
+            if count[0] <= 0:
+                break
+            path = self.linkqueue.popleft()
+            self.Visited |= {path}
+            data = self.Catchdata(path)
+            if data == "":
+                continue
+            pattern_j = re.compile(path)
+            self.AddElementToQueue(data, link_num, pattern_j, self.linkqueue, 2)
+            count[0] += -1
+        return
+
     def StartCrawl(self):
-        self.FindLinkSet()
-        self.FindXmlSet()
+
+        authorlink = re.compile(r'http://dblp.uni-trier.de/pers/hd/a/')  # link point to xml path
+        authorxml = re.compile(r'http://dblp.uni-trier.de/pers/xx')  # xml path
+        journallink =re.compile(r'http://dblp.uni-trier.de/db/journals/')
+        journalxml= re.compile(r'http://dblp.uni-trier.de/rec/xml/journals/')
+        conferencelink= re.compile(r'http://dblp.uni-trier.de/db/conf/')
+        conferencexml=re.compile(r'http://dblp.uni-trier.de/rec/xml/conf/')
+        linkpatternlist= []
+        xmlpatternlist = []
+        linkpatternlist.append(authorlink)
+        linkpatternlist.append(journallink)
+        linkpatternlist.append(conferencelink)
+        xmlpatternlist.append(authorxml)
+        xmlpatternlist.append(journalxml)
+        xmlpatternlist.append(conferencexml)
+
+        if not self.CheckCrawlType():
+            return False
+        self.FindLinkSet(linkpatternlist[self.crawltype])
+        if self.crawltype == 1:
+            self.MediumnJumpForLinkQueue()
+        self.FindXmlSet(xmlpatternlist[self.crawltype])
+        return True

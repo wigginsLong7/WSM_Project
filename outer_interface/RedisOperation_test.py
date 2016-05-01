@@ -15,6 +15,8 @@ print(handle.GetDocUrl('102'))
 """ get the content in a document, if not exists return null string """
 print(handle.GetDocFullContent('102'))
 
+print(handle.GetDocTitle('102'))
+
 """ get [total words; doc_num ; avarage length of document ] of a term, if not exists return null string """
 print(handle.GetDBHeaderData())
 

@@ -1,7 +1,7 @@
 from inner_kernel.InvertTableMaker import *
 
-xmlpath = 'dblpxml.txt'
-linkpath = 'dblpxmlsource.txt'
+xmlpath = 'dblpxmlconf.txt'
+linkpath = 'dblpxmlsourceconf.txt'
 docpath = 'DocData.txt'
 postinglistpath = 'TermPostingList.txt'
 a = InvertTableMaker(xmlpath, linkpath, postinglistpath, docpath)

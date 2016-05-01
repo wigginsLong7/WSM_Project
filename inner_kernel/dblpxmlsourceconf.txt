@@ -1,0 +1,5 @@
+http://dblp.uni-trier.de/db/conf/3dpvt
+http://dblp.uni-trier.de/db/conf/3dgis
+http://dblp.uni-trier.de/db/conf/3dim
+http://dblp.uni-trier.de/db/conf/3dor
+http://dblp.uni-trier.de/db/conf/3dph

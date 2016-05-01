@@ -29,15 +29,26 @@ class DocHandler:
         journalc = re.compile('<journal>(.+)</journal>')
         pagec = re.compile('<pages>(.+)</pages>')
         booktitlec = re.compile('<booktitle>(.+)</booktitle>')
+        numberc =re.compile('<number>(.+)</number>')
+        editorc = re.compile('<editor>(.+)</editor>')
+        isbnc = re.compile('<isbn>(.+)</isbn>')
+        publisherc =re.compile('<publisher>(.+)</publisher>')
+        seriesc=re.compile('[^<series(.+)>](.+)</series>')
+
         self.patternlist.append(authorc)
+        self.patternlist.append(editorc)
         self.patternlist.append(titlec)
         self.patternlist.append(booktitlec)
+        self.patternlist.append(publisherc)
         self.patternlist.append(pagec)
+        self.patternlist.append(yearc)
         self.patternlist.append(volumec)
         self.patternlist.append(journalc)
-        self.patternlist.append(yearc)
+        self.patternlist.append(numberc)
+        self.patternlist.append(isbnc)
+        self.patternlist.append(seriesc)
 
-    def TermModify(self, a, value):
+    def TermModify(self, a):
         '''
            called by function ContentModify(), if the value is digit ,add the prefix 'D_' to
            distinct the difference of term and the doc_ID
@@ -47,7 +58,7 @@ class DocHandler:
         else:
             return a
 
-    def ContentModify(self, content, TermTable, doccount, d_data, value, pos):
+    def ContentModify(self, content, TermTable, doccount, d_data, pos):
         '''
            call by function SingleDocString(),  seperate the term in the the data segment and add it in the TermTable list
         '''
@@ -63,7 +74,7 @@ class DocHandler:
                     t.set_num_del(False)
                     b = t.tokenize(i)
                     if b != "":
-                        term_name[0] = self.TermModify(b, value)
+                        term_name[0] = self.TermModify(b)
                         self.AddTerm(TermTable, term_name[0], str(doccount), pos[0])
                     pos[0] += 1
         return content
@@ -84,19 +95,23 @@ class DocHandler:
         subdata = []
         for i in self.patternlist:
             s = i.findall(data)
-            subdata.append(s)
-
+            if i == re.compile('[^<series(.+)>](.+)</series>') and s != []:
+                st = s[0].find('>')
+                t = [s[0][st+1:]]
+                subdata.append(t)
+            else:
+                subdata.append(s)
         for x in subdata:
-            substring = self.ContentModify(substring, TermTable, doccount, x, WSMEnum.AUTHOR, pos)
+            substring = self.ContentModify(substring, TermTable, doccount, x, pos)
         return substring
 
     def GetDocString(self, datastr, TermTable, doccount, data, pos):
         '''
            main function  entrance
         '''
-        data_sub = data.split('\n')
-        record = False
         datastring = [""]
+        record = False
+        data_sub = data.split('\n')
         ''' seperate the single document'''
         for i in data_sub:
             if len(i) >= 3:
@@ -107,7 +122,7 @@ class DocHandler:
                 b = i[0:4]
                 if b == '</r>':
                     record = False
-                    datastr = self.SingleDocString(datastr, TermTable, doccount, self.StringReplaceModify(datastring[0]), pos)
+                    datastr = self.SingleDocString(datastr, TermTable, doccount, self.StringReplaceModify(datastring[0]),pos)
                     datastring[0] = ""
             if record:
                 datastring[0] += (i + '\n')
@@ -123,3 +138,34 @@ class DocHandler:
         datastring = datastring.replace('<i>', '').replace('</i>', '').replace('<sup>', '').replace('</sup>', '').replace('(', ' ( ').replace(')', ' ) ')
         datastring = datastring.replace(',', ' , ').replace('$', ' $ ').replace('.', ' . ').replace('\'', ' \' ').replace(';', '; ').replace('\\', ' \\  ').replace('-', ' -  ').replace(':', ' : ')
         return datastring
+
+    def FindDocTitle(self, data):
+        '''
+           get the title of the document
+        '''
+        if data == "":
+            return ""
+        titlepattern = re.compile('<h1>(.+)</h1>')
+        a = titlepattern.findall(data)[0]
+        end = a.find('</span>')
+        if end != -1:
+            st = a.find('>')
+            return a[st+1:end-1]
+        return a
+    '''
+        if data == "":
+            return ""
+        st = data.find('<author>')
+        end = data.find('</author>')
+        if st == -1 or end == -1 or end-st <= 9:
+            return ""
+        titlestring = data[st + 8:end - 1]
+        for i in range(0, 62):
+            titlestring = titlestring.replace(list[i], latin[i])
+        return titlestring +" Personal Homepage"
+        '''
+
+
+    def GetSingleDocString(self, datastr, TermTable, doccount, data, pos):
+        datastr = self.SingleDocString(datastr, TermTable, doccount, self.StringReplaceModify(data), pos)
+        return datastr
