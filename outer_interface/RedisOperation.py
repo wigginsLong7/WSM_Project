@@ -9,6 +9,9 @@ class RedisHandler(RedisLinker):
         return RedisLinker.FetchData(self, key)
 
    def GetDFValue(self, term):
+        '''
+           return the dfvalue of the search term, if term does not exist ,return 0
+        '''
         if not self.ExistKey(term):
             return 0
         a = self.FetchData(term)
@@ -23,6 +26,12 @@ class RedisHandler(RedisLinker):
         return df_value  # return df_value of term
 
    def GetDocTermCount(self, docname):
+        '''
+           return the number of the words appear in a specific document
+        '''
+        if not docname.isdigit():
+           print("Error, the document ID must be integer")
+           return 0
         if not self.ExistKey(docname):
             return 0
         a = self.FetchData(docname)
@@ -36,6 +45,12 @@ class RedisHandler(RedisLinker):
         return count  # return the number of word of specific document
 
    def GetDocUrl(self, docname):
+        '''
+           return the search url of the specific document
+        '''
+        if not docname.isdigit():
+           print("Error, the document ID must be integer")
+           return ""
         if not self.ExistKey(docname):
             return ""
         a = self.FetchData(docname)
@@ -48,6 +63,12 @@ class RedisHandler(RedisLinker):
         return t[1]  # return the actual url link to document
 
    def GetDocTitle(self, docname):
+        '''
+           return the document title of  a specific document
+        '''
+        if not docname.isdigit():
+           print("Error, the document ID must be integer")
+           return ""
         if not self.ExistKey(docname):
             return ""
         a = self.FetchData(docname)
@@ -60,6 +81,12 @@ class RedisHandler(RedisLinker):
         return t[2]  # return the actual url link to document
 
    def GetDocFullContent(self,docname):
+        '''
+           return all the content data of a specific document
+        '''
+        if not docname.isdigit():
+           print("Error, the document ID must be integer")
+           return ""
         if not self.ExistKey(docname):
            return ""
         a = self.FetchData(docname)
@@ -71,6 +98,10 @@ class RedisHandler(RedisLinker):
         return c    # return the actual string of document content
 
    def GetDBHeaderData(self):
+        '''
+           return the number of  words from all documents in DB ,the number of  documents in DB, the average word
+           appear in a document
+        '''
         key ='0'
         if not self.ExistKey(key):
             return ""

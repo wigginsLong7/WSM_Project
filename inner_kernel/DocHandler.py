@@ -145,26 +145,20 @@ class DocHandler:
         '''
         if data == "":
             return ""
+        data = data.replace('\n', ' ')
         titlepattern = re.compile('<h1>(.+)</h1>')
-        a = titlepattern.findall(data)[0]
+        try:
+            t = titlepattern.findall(data)
+            a = titlepattern.findall(data)[0]
+        except:
+            print('Get title faild')
+            return "null title"
+        a = a.replace(',', ' ')
         end = a.find('</span>')
         if end != -1:
             st = a.find('>')
-            return a[st+1:end-1]
+            return a[st + 1:end] + " HomPage'"
         return a
-    '''
-        if data == "":
-            return ""
-        st = data.find('<author>')
-        end = data.find('</author>')
-        if st == -1 or end == -1 or end-st <= 9:
-            return ""
-        titlestring = data[st + 8:end - 1]
-        for i in range(0, 62):
-            titlestring = titlestring.replace(list[i], latin[i])
-        return titlestring +" Personal Homepage"
-        '''
-
 
     def GetSingleDocString(self, datastr, TermTable, doccount, data, pos):
         datastr = self.SingleDocString(datastr, TermTable, doccount, self.StringReplaceModify(data), pos)
