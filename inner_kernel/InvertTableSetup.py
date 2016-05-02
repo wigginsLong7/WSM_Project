@@ -1,6 +1,6 @@
 from inner_kernel.InvertTableMaker import *
 
-xmlpath = 'dblpxmlconf.txt'
+xmlpath = 'test.txt'
 linkpath = 'dblpxmlsourceconf.txt'
 docpath = 'DocData.txt'
 postinglistpath = 'TermPostingList.txt'

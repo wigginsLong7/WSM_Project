@@ -3,6 +3,7 @@ import urllib.request
 from urllib.error import URLError, HTTPError
 import socket
 from inner_kernel.DocHandler import *
+import time
 timeout = 30
 socket.setdefaulttimeout(timeout)
 
@@ -19,6 +20,13 @@ class InvertTableMaker:
         self.total_word = 0
         self.save_data_to_txt = txtSave
         self.save_data_to_redis = DBSave
+        self.sleeptime = 5
+
+    def ResetSleeptime(self, stime):
+        if stime.isdigit():
+            self.sleeptime = int(stime)
+        else:
+            print("sleep time must be integer number")
 
     def ResetSaveTxt(self, flag):
         self.save_data_to_txt = flag
@@ -55,27 +63,32 @@ class InvertTableMaker:
         '''
            main process of getting the invert_index_table
         '''
-        linklist = self.LinkListInital()
+        linklist = self.LinkListInital()      # get the link url set
         if len(linklist) == 0:
             print("Error, the number of linkpath is 0")
             return False
         inputfile = open(self.xmlpath, 'r')
-        lines = inputfile.readlines()
+        lines = inputfile.readlines()         # get the xml url set
+        sleepcount = [0]
         for line in lines:
             dh = DocHandler()
             self.url_count += 1
-            type = self.CheckLinkType(linklist[self.url_count-1])
+            type = self.CheckLinkType(linklist[self.url_count-1])   # check each url type(author? journal? conference?)
             if type == 3:
                 continue
-            whole_content = [""]
-            a = line.split(',')
+            if sleepcount[0] > 100:
+                time.sleep(self.sleeptime)
+                sleepcount[0] = 0
+            whole_content = [""]      # total content of a link url
+            a = line.split(',')       # one link url(a document) may be related to more than one xml url(journal,conference), split it
             pos = [0]
             for suburl in a:
                 if suburl == "" or suburl == '\n':
                     continue
+                sleepcount[0] += 1
                 insertstring = ""
                 data = self.GetUrlData(suburl)
-                if type == 0:
+                if type == 0:                 # deal with the single xml data string
                     insertstring = dh.GetDocString(insertstring, self.TermTable, self.true_doc_count, data, pos)
                 elif type == 1 or type == 2:
                     insertstring = dh.GetSingleDocString(insertstring, self.TermTable, self.true_doc_count, data, pos)

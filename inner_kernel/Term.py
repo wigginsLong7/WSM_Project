@@ -85,6 +85,9 @@ class TermList:
         return nulllist
 
     def GetPositionInDoc(self,docID):
+        if not docID.isdigit():
+            print("Error, document ID must be integer")
+            return []
         for i in self.postinglist:
             if docID == i.doc_ID:
                 return i.GetIntPositionList()  # return the postion of a term in specific document
@@ -96,6 +99,9 @@ class TermList:
             of a term (the number of times the term appear in a specific document),
             if the term is null(eg: search a term which can't in DB), return 0
          '''
+        if not docID.isdigit():
+            print("Error, document ID must be integer")
+            return 0
         if len(self.postinglist) == 0:
             return 0
         for i in self.postinglist:
