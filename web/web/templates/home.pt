@@ -12,6 +12,7 @@
 
     <!-- Bootstrap core CSS -->
     <link href="//oss.maxcdn.com/libs/twitter-bootstrap/3.0.3/css/bootstrap.min.css" rel="stylesheet">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,600' rel='stylesheet' type='text/css'>
 
     <!-- Custom styles for this scaffold -->
     <!--<link href="${request.static_url('web:static/theme.css')}" rel="stylesheet">-->
@@ -33,13 +34,14 @@
                         <input type="text" name="query" class="form-control" placeholder="Type your words"
                         value="${query_terms}">
                         <!--<input type="hidden" name="page" value="0">-->
-                        <button type="submit" class="btn btn-info">Search!</button>
+                        <button type="submit" class="btn btn-info"><i class="glyphicon glyphicon-search"></i></button>
                     </div>
                 </form>
              </div>
         </div>
         <div class="container">
             <div class="col-lg-offset-1 col-lg-10 results">
+                <p tal:condition="python:tot_docs>0 and query_terms !=''">About ${python:tot_docs} results found.</p>
                 <p tal:condition="python:len(docs)==0 and query_terms !=''">Sorry, no results found.</p>
                 <ul tal:condition="python:len(docs)>0">
                     <li tal:repeat="doc docs">
@@ -50,7 +52,7 @@
              </div>
 
             <div class="col-lg-offset-1 col-lg-10 pagination-wrapper">
-               <ul class="pagination" tal:condition="python:query_terms != ''">
+               <ul class="pagination pagination-sm" tal:condition="python:query_terms != '' and tot_docs>0">
                 <li tal:define="disabled python:cur_page <= 1" tal:attributes="class 'disabled' if disabled else None">
                   <a href="/?query=${query_terms}&page=${cur_page - 1}" aria-label="Previous">
                     <span aria-hidden="true">&laquo;</span>
@@ -68,9 +70,9 @@
             </div>
         </div>
 
-          <div class="container copyright" style="text-align:center">
+         <!-- <div class="container copyright" style="text-align:center">
             Copyright &copy; Dummies
-          </div>
+          </div>-->
     </div>
 
 

@@ -13,7 +13,7 @@ def my_view(request):
     query_terms = request.params.get('query', '')
     page_id = int(request.params.get('page', '0'))
     if query_terms == '':
-        return {'docs': [], 'page_class': 'page-index', 'query_terms': query_terms, 'page_counts': 0}
+        return {'docs': [], 'page_class': 'page-index', 'query_terms': query_terms, 'page_counts': 0, 'tot_docs':0}
 
     if page_id == 0:
         global query
@@ -21,7 +21,8 @@ def my_view(request):
         page_id += 1
 
     docs = query.retrieve_top_docs(20 * (page_id-1), 20 * page_id)
-    page_cnt = int((query.get_rel_doc_counts()-1) / 20) + 1
+    tot_docs = query.get_rel_doc_counts()
+    page_cnt = int((tot_docs-1) / 20) + 1
 
     # doc {"url": url, "content": content, "position": pos}
     ret_docs = []
@@ -82,4 +83,4 @@ def my_view(request):
 
     return {'docs': ret_docs, 'page_class': 'page-results',
             'query_terms': query_terms, 'page_counts': page_cnt,
-            'cur_page': page_id}
+            'cur_page': page_id, 'tot_docs': tot_docs}
