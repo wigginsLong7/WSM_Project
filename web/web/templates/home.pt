@@ -45,7 +45,7 @@
                 <p tal:condition="python:len(docs)==0 and query_terms !=''">Sorry, no results found.</p>
                 <ul tal:condition="python:len(docs)>0">
                     <li tal:repeat="doc docs">
-                        <h4><a href="${doc.url}">${doc.url}</a></h4>
+                        <h4><a href="${doc.url}">${doc.title}</a></h4>
                         <p tal:content="structure doc.content"></p>
                     </li>
                 </ul>

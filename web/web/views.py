@@ -17,14 +17,14 @@ def my_view(request):
 
     if page_id == 0:
         global query
-        query = Query(query_terms)
+        query = Query(query_terms) #TODO: %20 and '+' encoding problem
         page_id += 1
 
     docs = query.retrieve_top_docs(20 * (page_id-1), 20 * page_id)
     tot_docs = query.get_rel_doc_counts()
     page_cnt = int((tot_docs-1) / 20) + 1
 
-    # doc {"url": url, "content": content, "position": pos}
+    # doc {"url": url, "content": content, "position": pos, "title": title}
     ret_docs = []
     for doc in docs:
         if not doc['url']:

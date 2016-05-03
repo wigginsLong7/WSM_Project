@@ -125,8 +125,9 @@ class Query:
         for docID in docIDs:
             url = self.db.GetDocUrl(docID)
             content = self.db.GetDocFullContent(docID)
+            title = self.db.GetDocTitle(docID)
             pos = self.positions[docID]
-            docs.append({"url": url, "content": content, "position": pos})
+            docs.append({"url": url, "title": title, "content": content, "position": pos})
 
         return docs
 
