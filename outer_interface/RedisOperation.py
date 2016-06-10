@@ -15,7 +15,7 @@ class RedisHandler(RedisLinker):
            tterm = "A_" + term
         elif type == WSMEnum.JOURNAL_FIELD:
            tterm = "J_" + term
-        elif type == WSMEnum.TITLE_FILED:
+        elif type == WSMEnum.TITLE_FIELD:
            tterm = "T_" + term
         else:
            tterm = term
@@ -114,7 +114,7 @@ class RedisHandler(RedisLinker):
     elif type == WSMEnum.JOURNAL_FIELD:
         tterm = "J_"+ term
         return RedisLinker.GetTermPostingList(self, tterm)
-    elif type == WSMEnum.TITLE_FILED:
+    elif type == WSMEnum.TITLE_FIELD:
         tterm = "T_" + term
         return RedisLinker.GetTermPostingList(self, tterm)
     else:

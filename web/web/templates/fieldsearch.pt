@@ -28,36 +28,36 @@
   <body>
 
     <div class="container page-wrapper ${page_class}">
-        <div class="container">
-            <div class="col-lg-offset-2 col-lg-8">
+        <div class="row">
+            <div class="col-lg-offset-1 col-lg-10">
                 <form method="GET" action="/fieldsearch" class="query-form">
-                    <div class="form-group">
-                        <label for="year">Year</label>
+                    <div class="form-group col-lg-2 field">
+                        <!--<label for="year">Year</label>-->
                         <input type="text" id="year" name="year" class="form-control" placeholder="year" value="${query_year}">
                     </div>
-                    <div class="form-group">
-                        <label for="author">Author</label>
+                    <div class="form-group col-lg-3 field">
+                        <!--<label for="author">Author</label>-->
                         <input type="text" id="author" name="author" class="form-control" placeholder="author" value="${query_author}">
                     </div>
-                    <div class="form-group">
-                        <label for="journal">Journal</label>
+                    <div class="form-group col-lg-3 field">
+                        <!--<label for="journal">Journal</label>-->
                         <input type="text" id="journal" name="journal" class="form-control" placeholder="journal" value="${query_journal}">
                     </div>
-                    <div class="form-group">
-                        <label for="title">Title</label>
+                    <div class="form-group col-lg-3 field">
+                        <!--<label for="title">Title</label>-->
                         <input type="text" id="title" name="title" class="form-control" placeholder="title" value="${query_title}">
                     </div>
-                    <div class="form-group">
+                    <div class="form-group col-lg-1 field">
                         <!--<input type="hidden" name="page" value="0">-->
-                        <button type="submit" class="btn btn-info" style="width:100%"><i class="glyphicon glyphicon-search"></i></button>
+                        <button type="submit" class="btn btn-info"><i class="glyphicon glyphicon-search"></i></button>
                     </div>
                 </form>
              </div>
         </div>
-        <div class="container">
+        <div class="row">
             <div class="col-lg-offset-1 col-lg-10 results">
-                <p tal:condition="python:tot_docs>0 and query_year !='' or query_title !='' or query_journal !='' or query_author != ''">About ${python:tot_docs} results found.</p>
-                <p tal:condition="python:len(docs)==0 and query_year !]='' or query_title !='' or query_journal !='' or query_author != ''">Sorry, no results found.</p>
+                <p tal:condition="python:tot_docs>0 and (query_year !='' or query_title !='' or query_journal !='' or query_author != '')">About ${python:tot_docs} results found.</p>
+                <p tal:condition="python:len(docs)==0 and (query_year !='' or query_title !='' or query_journal !='' or query_author != '')">Sorry, no results found.</p>
                 <ul tal:condition="python:len(docs)>0">
                     <li tal:repeat="doc docs">
                         <h4><a href="${doc.url}">${doc.title}</a></h4>

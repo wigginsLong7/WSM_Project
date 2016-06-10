@@ -17,4 +17,4 @@ class WSMEnum:
     YEAR_FIELD = 7
     AUTHOR_FIELD = 8
     JOURNAL_FIELD = 9
-    TITLE_FILED = 17
+    TITLE_FIELD = 17

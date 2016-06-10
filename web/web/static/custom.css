@@ -94,7 +94,8 @@ input.form-control[name="query"]:focus {
     border-color: #472b83;
 }
 
-.btn-info:hover {
+.btn-info:hover,
+.btn-info:focus {
     background-color: #4512ae;
     border-color: #472b83;
 }
