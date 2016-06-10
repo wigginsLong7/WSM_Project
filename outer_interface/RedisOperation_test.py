@@ -4,7 +4,7 @@ from inner_kernel.TypeEnum import WSMEnum
 handle =RedisHandler()
 
 """ get dfvalue of a term, if not exists return 0 """
-print(handle.GetDFValue('based'))
+print(handle.GetDFValue('networks',WSMEnum.JOURNAL_FIELD))
 
 """ get the number of words in a document, if not exists return 0 """
 print(handle.GetDocTermCount('1'))
@@ -21,7 +21,7 @@ print(handle.GetDocTitle('95'))
 print(handle.GetDBHeaderData())
 
 """  get the TermList """
-term = handle.GetTermPostingList('networks',WSMEnum.JOURNAL_FIELD)
+term = handle.GetTermPostingList('networks')
 
 if isinstance(term, TermList):
 

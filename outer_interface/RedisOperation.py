@@ -8,10 +8,20 @@ class RedisHandler(RedisLinker):
    def FetchData(self, key):
         return RedisLinker.FetchData(self, key)
 
-   def GetDFValue(self, term):
-        if not self.ExistKey(term):
+   def GetDFValue(self, term, type =WSMEnum.NO_FIELD):
+        if type == WSMEnum.YEAR_FIELD:
+           tterm = "YEAR_" + term
+        elif type == WSMEnum.AUTHOR_FIELD:
+           tterm = "A_" + term
+        elif type == WSMEnum.JOURNAL_FIELD:
+           tterm = "J_" + term
+        elif type == WSMEnum.TITLE_FILED:
+           tterm = "T_" + term
+        else:
+           tterm = term
+        if not self.ExistKey(tterm):
             return 0
-        a = self.FetchData(term)
+        a = self.FetchData(tterm)
         if a == "":
             return 0
         try:
