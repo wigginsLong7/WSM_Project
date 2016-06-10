@@ -1,0 +1,21 @@
+.query-form {
+    margin-top: 150px;
+    min-height: 100px;
+}
+
+input.form-control[name="year"],
+input.form-control[name="title"],
+input.form-control[name="author"],
+input.form-control[name="journal"]
+{
+    border-radius: 0;
+}
+
+input.form-control[name="year"]:focus,
+input.form-control[name="title"]:focus,
+input.form-control[name="author"]:focus,
+input.form-control[name="journal"]:focus {
+    border-color: #7546d7;
+    box-shadow: 0 0 0;
+    outline: 0;
+}
