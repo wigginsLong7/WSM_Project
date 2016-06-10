@@ -5,8 +5,10 @@ import os
 sys.path.append(os.path.abspath(os.path.dirname(__file__) + '/' + '../..'))
 
 from outer_interface.Query import Query
+from outer_interface.Query import FieldSearch
 
 query = None
+fieldsearch = None
 
 @view_config(route_name='home', renderer='templates/home.pt')
 def my_view(request):
@@ -102,12 +104,12 @@ def field_view(request):
                 'page_counts': 0, 'tot_docs':0}
 
     if page_id == 0:
-        global query
-        query = Query(query_terms) #TODO: %20 and '+' encoding problem
+        global fieldsearch
+        fieldsearch = FieldSearch(query_year, query_title, query_journal, query_author) #TODO: %20 and '+' encoding problem
         page_id += 1
 
-    docs = query.retrieve_top_docs(20 * (page_id-1), 20 * page_id)
-    tot_docs = query.get_rel_doc_counts()
+    docs = fieldsearch.retrieve_top_docs(20 * (page_id-1), 20 * page_id)
+    tot_docs = fieldsearch.get_rel_doc_counts()
     page_cnt = int((tot_docs-1) / 20) + 1
 
     # doc {"url": url, "content": content, "position": pos, "title": title}

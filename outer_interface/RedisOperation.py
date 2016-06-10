@@ -114,7 +114,7 @@ class RedisHandler(RedisLinker):
    def AddDocToTermList(self, Tlist, data):   # [doc_ID,tf_value;(x,x,x,)]
         return RedisLinker.AddDocToTermList(self, Tlist, data)
 
-   def ExistKey(self, key):
+   def ExistKey(self, key, p=True):
         return RedisLinker.ExistKey(self, key)
 
 

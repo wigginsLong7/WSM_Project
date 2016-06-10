@@ -30,7 +30,7 @@
     <div class="container page-wrapper ${page_class}">
         <div class="container">
             <div class="col-lg-offset-2 col-lg-8">
-                <form method="GET" action="/" class="query-form">
+                <form method="GET" action="/fieldsearch" class="query-form">
                     <div class="form-group">
                         <label for="year">Year</label>
                         <input type="text" id="year" name="year" class="form-control" placeholder="year" value="${query_year}">
@@ -56,8 +56,8 @@
         </div>
         <div class="container">
             <div class="col-lg-offset-1 col-lg-10 results">
-                <p tal:condition="python:tot_docs>0 and query_terms !=''">About ${python:tot_docs} results found.</p>
-                <p tal:condition="python:len(docs)==0 and query_terms !=''">Sorry, no results found.</p>
+                <p tal:condition="python:tot_docs>0 and query_year !='' or query_title !='' or query_journal !='' or query_author != ''">About ${python:tot_docs} results found.</p>
+                <p tal:condition="python:len(docs)==0 and query_year !]='' or query_title !='' or query_journal !='' or query_author != ''">Sorry, no results found.</p>
                 <ul tal:condition="python:len(docs)>0">
                     <li tal:repeat="doc docs">
                         <h4><a href="${doc.url}">${doc.title}</a></h4>
@@ -67,17 +67,17 @@
              </div>
 
             <div class="col-lg-offset-1 col-lg-10 pagination-wrapper">
-               <ul class="pagination pagination-sm" tal:condition="python:query_terms != '' and tot_docs>0">
+               <ul class="pagination pagination-sm" tal:condition="python:query_year !='' or query_title !='' or query_journal !='' or query_author != '' and tot_docs>0">
                 <li tal:define="disabled python:cur_page <= 1" tal:attributes="class 'disabled' if disabled else None">
-                  <a href="/?query=${query_terms}&page=${cur_page - 1}" aria-label="Previous">
+                  <a href="/fieldsearch?year=${query_year}&title=${query_title}&author=${query_author}&journal=${query_journal}&page=${cur_page - 1}" aria-label="Previous">
                     <span aria-hidden="true">&laquo;</span>
                   </a>
                 </li>
                 <li tal:repeat="page range(page_counts)">
-                    <a href="/?query=${query_terms}&page=${page+1}" tal:define="active python:(page+1)==cur_page"
+                    <a href="/fieldsearch?year=${query_year}&title=${query_title}&author=${query_author}&journal=${query_journal}&page=${page+1}" tal:define="active python:(page+1)==cur_page"
                     tal:attributes="class 'active' if active else None">${page+1}</a></li>
                 <li tal:define="disabled python:cur_page >= page_counts" tal:attributes="class 'disabled' if disabled else None">
-                  <a href="/?query=${query_terms}&page=${cur_page + 1}" aria-label="Next">
+                  <a href="/fieldsearch?year=${query_year}&title=${query_title}&author=${query_author}&journal=${query_journal}&page=${cur_page + 1}" aria-label="Next">
                     <span aria-hidden="true">&raquo;</span>
                   </a>
                 </li>
