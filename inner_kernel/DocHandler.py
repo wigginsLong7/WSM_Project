@@ -58,11 +58,28 @@ class DocHandler:
         else:
             return a
 
-    def ContentModify(self, content, TermTable, doccount, d_data, pos):
+    def TermModifyType(self, a, type):
+       '''
+            called by function ContentModify(), if the value is digit ,add the prefix 'D_' to
+            distinct the difference of term and the doc_ID
+        '''
+       if type == 0 or type == 1:
+          return "A_" + str(a)
+       elif type == 3 or type == 8:
+          return "J_" + str(a)
+       elif type == 6:
+          return "YEAR_" + str(a)
+       elif type == 2:
+          return "T_" + str(a)
+       else:
+           print("error")
+           return "null"
+
+    def ContentModify(self, content, TermTable, doccount, d_data, pos,type):
         '''
            call by function SingleDocString(),  seperate the term in the the data segment and add it in the TermTable list
         '''
-        term_name = [""]
+        term_name = ["",""]
         while d_data:
             a = d_data.pop()
             a = a.replace('/', ' / ')
@@ -75,6 +92,9 @@ class DocHandler:
                     b = t.tokenize(i)
                     if b != "":
                         term_name[0] = self.TermModify(b)
+                        if type <= 3 or type == 6 or type == 8:
+                            term_name[1] = self.TermModifyType(b,type)
+                            self.AddTerm(TermTable, term_name[1], str(doccount), pos[0])
                         self.AddTerm(TermTable, term_name[0], str(doccount), pos[0])
                     pos[0] += 1
         return content
@@ -101,8 +121,10 @@ class DocHandler:
                 subdata.append(t)
             else:
                 subdata.append(s)
+        count = [0]
         for x in subdata:
-            substring = self.ContentModify(substring, TermTable, doccount, x, pos)
+            substring = self.ContentModify(substring, TermTable, doccount, x, pos,count[0])
+            count[0] += 1
         return substring
 
     def GetDocString(self, datastr, TermTable, doccount, data, pos):
@@ -148,17 +170,29 @@ class DocHandler:
         data = data.replace('\n', ' ')
         titlepattern = re.compile('<h1>(.+)</h1>')
         try:
-            t = titlepattern.findall(data)
             a = titlepattern.findall(data)[0]
         except:
             print('Get title faild')
             return "null title"
-        a = a.replace(',', ' ')
+        a = a.replace(',',' ')
         end = a.find('</span>')
         if end != -1:
             st = a.find('>')
-            return a[st + 1:end] + " HomPage'"
+            return a[st+1:end] + " HomPage"
         return a
+    '''
+        if data == "":
+            return ""
+        st = data.find('<author>')
+        end = data.find('</author>')
+        if st == -1 or end == -1 or end-st <= 9:
+            return ""
+        titlestring = data[st + 8:end - 1]
+        for i in range(0, 62):
+            titlestring = titlestring.replace(list[i], latin[i])
+        return titlestring +" Personal Homepage"
+        '''
+
 
     def GetSingleDocString(self, datastr, TermTable, doccount, data, pos):
         datastr = self.SingleDocString(datastr, TermTable, doccount, self.StringReplaceModify(data), pos)
