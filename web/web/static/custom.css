@@ -2,11 +2,6 @@
     color: red
 }
 
-.query-form {
-    margin-top: 300px;
-    min-height: 100px;
-}
-
 input.form-control[name="query"] {
     display:inline-block;
     width:90%;

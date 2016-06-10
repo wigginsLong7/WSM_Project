@@ -8,7 +8,7 @@
     <meta name="author" content="Wai-Kin Long, Nga-Ching Chan">
     <link rel="shortcut icon" href="${request.static_url('web:static/pyramid-16x16.png')}">
 
-    <title>A Dumb Search Engine</title>
+    <title>A Dumb Search Engine: Field Search</title>
 
     <!-- Bootstrap core CSS -->
     <link href="//oss.maxcdn.com/libs/twitter-bootstrap/3.0.3/css/bootstrap.min.css" rel="stylesheet">
@@ -17,7 +17,7 @@
     <!-- Custom styles for this scaffold -->
     <!--<link href="${request.static_url('web:static/theme.css')}" rel="stylesheet">-->
     <link href="${request.static_url('web:static/custom.css')}" rel="stylesheet">
-    <link href="${request.static_url('web:static/home.css')}" rel="stylesheet">
+    <link href="${request.static_url('web:static/fieldsearch.css')}" rel="stylesheet">
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
       <script src="//oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
@@ -32,10 +32,24 @@
             <div class="col-lg-offset-2 col-lg-8">
                 <form method="GET" action="/" class="query-form">
                     <div class="form-group">
-                        <input type="text" name="query" class="form-control" placeholder="Type your words"
-                        value="${query_terms}">
+                        <label for="year">Year</label>
+                        <input type="text" id="year" name="year" class="form-control" placeholder="year" value="${query_year}">
+                    </div>
+                    <div class="form-group">
+                        <label for="author">Author</label>
+                        <input type="text" id="author" name="author" class="form-control" placeholder="author" value="${query_author}">
+                    </div>
+                    <div class="form-group">
+                        <label for="journal">Journal</label>
+                        <input type="text" id="journal" name="journal" class="form-control" placeholder="journal" value="${query_journal}">
+                    </div>
+                    <div class="form-group">
+                        <label for="title">Title</label>
+                        <input type="text" id="title" name="title" class="form-control" placeholder="title" value="${query_title}">
+                    </div>
+                    <div class="form-group">
                         <!--<input type="hidden" name="page" value="0">-->
-                        <button type="submit" class="btn btn-info"><i class="glyphicon glyphicon-search"></i></button>
+                        <button type="submit" class="btn btn-info" style="width:100%"><i class="glyphicon glyphicon-search"></i></button>
                     </div>
                 </form>
              </div>
